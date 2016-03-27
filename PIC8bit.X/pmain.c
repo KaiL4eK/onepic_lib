@@ -4,8 +4,8 @@
  *
  */
 
-#include <xc.h>
-#include <stdint.h>
+#include "LCD.h"
+#include "core_.h"
 
 // #pragma config statements should precede project file includes.
 // Use project enums instead of #define for ON and OFF.
@@ -34,7 +34,7 @@ void delay_ms ( uint16_t time_ms )
     TMR2 = 0;                   // Сброс таймера
     T2CONbits.T2CKPS = 0b11;    // Настройка на делителе 64
     PR2 = 125;                  // Расчет на работу таймера до переполенния в течении 1 мс
-                                // 125 = 32MHz / 4 / 64 * 0.001 sec
+                                // 125 = 32MHz / 4 / 64 / 1 * 0.001 sec
     T2CONbits.TMR2ON = 1;       // Включаем таймер
     
     uint16_t msCounter = 0; // Каждые 1 мс таймер увеличивается на 1
@@ -45,7 +45,26 @@ void delay_ms ( uint16_t time_ms )
         msCounter++;            // Отсчитали 1 мс - инкрементируем таймер
     }
     
-    T1CONbits.TMR1ON = 0;       // Отключаем таймер
+    T2CONbits.TMR2ON = 0;       // Отключаем таймер
+}
+
+void delay_us ( uint16_t time_us )
+{
+    TMR2 = 0;                   // Сброс таймера
+    T2CONbits.T2CKPS = 0b00;    // Настройка на делителе 1
+    PR2 = 8;                    // Расчет на работу таймера до переполенния в течении 1 мкс
+                                // 8 = 32MHz / 4 / 1 / 1 * 0.000001 sec
+    T2CONbits.TMR2ON = 1;       // Включаем таймер
+    
+    uint16_t msCounter = 0;     // Каждые 1 мкс таймер увеличивается на 1
+    while ( msCounter < time_us )   // Счет до получения требуемых микросекунд
+    {
+        while ( !TMR2IF ) { }   // Ожидаем переполнения
+        TMR2IF = 0;             // очищаем флаг
+        msCounter++;            // Отсчитали 1 мкс - инкрементируем таймер
+    }
+    
+    T2CONbits.TMR2ON = 0;       // Отключаем таймер
 }
 
 uint16_t freqVal = 0;
@@ -58,14 +77,22 @@ void main( void )
     OSCCONbits.IRCF = 0b1110;
     OSCCONbits.SCS = 0b00;
     OSCCONbits.SPLLEN = 1;
+    while ( PLLR == 0 ) { }
     /*******************************************/
     
-    TRISB0 = 1;
-    ANSB0 = 1;
-    CPSCON0bits.CPSON = 1;
+    CM1CON0bits.C1POL = 1;
+    CM1CON0bits.C1SP = 1;
+    CM1CON0bits.C1OE = 1;
+    
+    CM2CON0bits.C2SP = 1;
+    CM2CON0bits.C2OE = 1;
+    
+    TRISB2 = 1;
+    ANSB2 = 1;
     CPSCON0bits.CPSRNG = 0b11;
-    CPSCON0bits.CPSRM = 1;
     CPSCON0bits.T0XCS = 1;
+    CPSCON1bits.CPSCH = 0b0010;
+    CPSCON0bits.CPSON = 1;
     
     // Enable interrupts
     INTCONbits.PEIE = 1;
@@ -90,21 +117,33 @@ void main( void )
     TMR1GIF = 0;
     TMR1GIE = 1;
     
+    lcd_init();
     
+//    TRISA0 = 0;
     
-    TRISA0 = 0;
-    
+    uint8_t buffer[4];
     
     while ( 1 )
     {  
-        if ( freqVal > 300 )
-        {
-            LATA0 = 1;
-        }
-        else
-        {
-            LATA0 = 0;
-        }
+        memset( buffer, 0, sizeof( buffer ) );
+        sprintf( buffer, "%d", freqVal );
+        lcd_clear();
+        lcd_setLineOne();
+        lcd_write_string( buffer );
+        delay_ms( 500 );
+        
+//        if ( freqVal > 500 )
+//        if ( T1GVAL )
+//        {
+//            LATA0 = 1;
+//        }
+//        else
+//        {
+//            LATA0 = 0;
+//        }
+        
+
+
 //        for ( int i = 0; i < 6; i++ )
 //        {
 //            LATA |= 1 << i;
@@ -115,18 +154,31 @@ void main( void )
     return;
 }
 
+void restartTimers ( void )
+{
+    T1CONbits.TMR1ON = 0;
+    TMR1H = TMR1L = 0;
+    T1CONbits.TMR1ON = 1;
+    TMR0 = 0;
+}
+
 void interrupt tc_int(void)
 {
     if ( TMR0IF )
     {
-        freqVal = ((int)TMR1H << 8) | TMR1L;
-        T1CONbits.TMR1ON = 0;
-        TMR1H = TMR1L = 0;
-        T1CONbits.TMR1ON = 1;
+        freqVal = TMR1L | ((int)TMR1H << 8);
+        restartTimers();
         TMR0IF = 0;
     }
-    else if ( TMR1GIF )
+    
+    if ( TMR1GIF )
     {
         TMR1GIF = 0;
+    }
+    
+    if ( TMR0IF )
+    {
+        restartTimers();
+        TMR0IF = 0;
     }
 } 

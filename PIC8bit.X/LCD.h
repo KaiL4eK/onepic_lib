@@ -10,17 +10,17 @@
 #include <xc.h>
 
 // D7-D4 pins
-#define D7_bit      LATD3
-#define D7_ddr      TRISD3
+#define D3_bit      LATD3
+#define D3_ddr      TRISD3
 
-#define D6_bit      LATD2
-#define D6_ddr      TRISD2
+#define D2_bit      LATD2
+#define D2_ddr      TRISD2
 
-#define D5_bit      LATD1
-#define D5_ddr      TRISD1
+#define D1_bit      LATD1
+#define D1_ddr      TRISD1
 
-#define D4_bit      LATD0
-#define D4_ddr      TRISD0
+#define D0_bit      LATD0
+#define D0_ddr      TRISD0
 
 //Enable pin
 #define E_bit       LATA6
@@ -47,11 +47,15 @@
 
 // Function Prototypes
 void lcd_init(void);
-void lcd_write_4(uint8_t);
-void lcd_write_instruction_4d(uint8_t);
-void lcd_write_character_4d(uint8_t);
-void lcd_write_string_4d(uint8_t *);
-void lcd_init_4d(void);
+void lcd_write(uint8_t);
+void lcd_write_instruction(uint8_t);
+void lcd_write_character(uint8_t);
+void lcd_write_string(uint8_t *);
+void lcd_init_internal(void);
+
+void lcd_clear ( void );
+void lcd_setLineOne ( void );
+void lcd_setLineTwo ( void );
 
 #endif	/* LCD_H_ */
 
