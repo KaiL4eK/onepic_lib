@@ -1,0 +1,8 @@
+**/build/
+**/dist/
+**/nbproject/private/
+**/disassembly/
+**/Makefile-genesis.properties
+*.txt
+*.TXT
+
