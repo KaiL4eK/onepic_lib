@@ -67,10 +67,136 @@ void delay_us ( uint16_t time_us )
     T2CONbits.TMR2ON = 0;       // Отключаем таймер
 }
 
-uint16_t freqVal = 0;
+uint16_t readADCVal ( int channel )
+{
+    ADCON0bits.CHS = channel;
+    
+    delay_us( 5 );
+    
+    ADCON0bits.GO = 1;
+    while ( ADCON0bits.nDONE ) { }
+    
+    return( ((int)ADRESH << 8) | ADRESL );
+}
 
-void main( void ) 
-{  
+typedef enum
+{
+    MID_B = 8,
+    UP_B = 9,
+    LEFT_B = 10,
+    RIGHT_B = 11,
+    DOWN_B = 12
+            
+}CapButtons_t;
+
+uint16_t    iOffsetUp_b = 0,
+            iOffsetDown_b = 0,
+            iOffsetMid_b = 0,
+            iOffsetLeft_b = 0,
+            iOffsetRight_b = 0;
+
+uint16_t scanMTouchButton ( CapButtons_t button  );
+
+uint16_t getMTouchButIOffset ( CapButtons_t button )
+{
+    switch ( button )
+    {
+        case MID_B:
+            return( iOffsetMid_b );
+            
+        case UP_B:
+            return( iOffsetUp_b );
+            
+        case LEFT_B:
+            return( iOffsetLeft_b );
+            
+        case RIGHT_B:
+            return( iOffsetRight_b );
+            
+        case DOWN_B:
+            return( iOffsetDown_b );
+    }
+    return( 0 );
+}
+
+#define MTOUCH_SAMPLES 10   // Число должно быть не более 65535/1024 = 63
+#define OFF_PERCENT 0.9f    // Процент возможного разброса значения с АЦП
+
+void initMTouchButtons ( void )
+{
+    ADCON1bits.ADFM = 1;
+    ADCON1bits.ADCS = 0b101;
+    ADCON0bits.ADON = 1;
+    
+    for ( int i = 0; i < MTOUCH_SAMPLES; i++ )
+    {
+        iOffsetUp_b += scanMTouchButton( UP_B );
+        iOffsetDown_b += scanMTouchButton( DOWN_B );
+        iOffsetMid_b += scanMTouchButton( MID_B );
+        iOffsetLeft_b += scanMTouchButton( LEFT_B );
+        iOffsetRight_b += scanMTouchButton( RIGHT_B );
+    }
+    
+    iOffsetUp_b = (uint16_t)(iOffsetUp_b/MTOUCH_SAMPLES * OFF_PERCENT);
+    iOffsetDown_b = (uint16_t)(iOffsetDown_b/MTOUCH_SAMPLES * OFF_PERCENT);
+    iOffsetMid_b = (uint16_t)(iOffsetMid_b/MTOUCH_SAMPLES * OFF_PERCENT);
+    iOffsetLeft_b = (uint16_t)(iOffsetLeft_b/MTOUCH_SAMPLES * OFF_PERCENT);
+    iOffsetRight_b = (uint16_t)(iOffsetRight_b/MTOUCH_SAMPLES * OFF_PERCENT);
+}
+
+uint16_t scanMTouchButton ( CapButtons_t button  )
+{
+    // Установка отедьного пина на высокий потенциал
+    TRISE1 = ANSE1 = 0;
+    LATE1 = 1;
+
+    ADCON0bits.CHS = 0b00110;
+
+    int capDelay = 5;
+    
+    switch ( button )
+    {
+        case MID_B:
+            TRISB2 = ANSB2 = LATB2 = 0;
+            delay_ms( capDelay );  // Задержка для заряда емкости модуля АЦП
+            TRISB2 = ANSB2 = 1;
+            break;
+            
+        case UP_B:
+            TRISB3 = ANSB3 = LATB3 = 0;
+            delay_ms( capDelay );  // Задержка для заряда емкости модуля АЦП
+            TRISB3 = ANSB3 = 1;
+            break;
+            
+        case LEFT_B:
+            TRISB1 = ANSB1 = LATB1 = 0;
+            delay_ms( capDelay );  // Задержка для заряда емкости модуля АЦП
+            TRISB1 = ANSB1 = 1;
+            break;
+            
+        case RIGHT_B:
+            TRISB4 = ANSB4 = LATB4 = 0;
+            delay_ms( capDelay );  // Задержка для заряда емкости модуля АЦП
+            TRISB4 = ANSB4 = 1;
+            break;
+            
+        case DOWN_B:
+            TRISB0 = ANSB0 = LATB0 = 0;
+            delay_ms( capDelay );  // Задержка для заряда емкости модуля АЦП
+            TRISB0 = ANSB0 = 1;
+            break;
+    }
+    
+    return( readADCVal( button ) );
+}
+
+int isMTouchButPressed ( CapButtons_t button )
+{
+    return( scanMTouchButton( button ) < getMTouchButIOffset( button ) ? 1 : 0 );
+}
+
+void initPLL32MHz ( void )
+{
     /*
      * Настройка на 32 MHz с PLLx4 (8*4) MHz 
      */
@@ -78,107 +204,98 @@ void main( void )
     OSCCONbits.SCS = 0b00;
     OSCCONbits.SPLLEN = 1;
     while ( PLLR == 0 ) { }
-    /*******************************************/
-    
-    CM1CON0bits.C1POL = 1;
-    CM1CON0bits.C1SP = 1;
-    CM1CON0bits.C1OE = 1;
-    
-    CM2CON0bits.C2SP = 1;
-    CM2CON0bits.C2OE = 1;
-    
-    TRISB2 = 1;
-    ANSB2 = 1;
-    CPSCON0bits.CPSRNG = 0b11;
-    CPSCON0bits.T0XCS = 1;
-    CPSCON1bits.CPSCH = 0b0010;
-    CPSCON0bits.CPSON = 1;
-    
-    // Enable interrupts
-    INTCONbits.PEIE = 1;
-    INTCONbits.GIE = 1;
-    
-    OPTION_REGbits.nWPUEN = 1;
-    OPTION_REGbits.INTEDG = 1;
-    OPTION_REGbits.PS = 0b111;
-    TMR0IF = 0;
-    TMR0IE = 1;
-    
-    T1CONbits.TMR1CS = 0b11;
-    T1CONbits.nT1SYNC = 1;
-    T1CONbits.TMR1ON = 1;
-    
-    T1GCONbits.TMR1GE = 1;
-    T1GCONbits.T1GPOL = 1;
-    T1GCONbits.T1GTM = 1;
-    T1GCONbits.T1GVAL = 1;
-    T1GCONbits.T1GSS = 0b01;
-    
-    TMR1GIF = 0;
-    TMR1GIE = 1;
-    
+}
+
+#define POTENC_CH 13
+
+uint16_t potencReadVal ( void )
+{    
+    return( readADCVal( POTENC_CH ) );
+}
+
+char *weekDay[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+
+void main( void ) 
+{  
+    initPLL32MHz();    
     lcd_init();
+    initMTouchButtons();
+    i2c_init( 400000L );
+    i2c_write_bits_eeprom( 0b1101111, 0x00, 7, 1, 1 );
+    TRISD &= 0b00001111; 
+    TRISA &= 0b11000000;
     
-//    TRISA0 = 0;
+#define BUF_SIZE 16
     
-    uint8_t buffer[4];
+    uint8_t bufferOne[BUF_SIZE],
+            bufferTwo[BUF_SIZE];
     
     while ( 1 )
     {  
-        memset( buffer, 0, sizeof( buffer ) );
-        sprintf( buffer, "%d", freqVal );
+        LATD4 = isMTouchButPressed( UP_B ) | isMTouchButPressed( MID_B );
+        LATD5 = isMTouchButPressed( LEFT_B ) | isMTouchButPressed( MID_B );
+        LATD6 = isMTouchButPressed( RIGHT_B ) | isMTouchButPressed( MID_B );
+        LATD7 = isMTouchButPressed( DOWN_B ) | isMTouchButPressed( MID_B );
+        
+        uint16_t potencVal = potencReadVal(),
+                ledStep = 1023/6;
+        
+        LATA &= 0b11000000;
+        
+        for ( int i = 0; i <= 5; i++ )
+        {
+            if ( potencVal > ledStep*i )
+            {
+                LATA |= 1 << i;
+            }
+        }
+        
+        uint8_t seconds = i2c_read_byte_eeprom( 0b1101111, 0x00 ),
+                minutes = i2c_read_byte_eeprom( 0b1101111, 0x01 ),
+                hours = i2c_read_byte_eeprom( 0b1101111, 0x02 ),
+                wDay = i2c_read_byte_eeprom( 0b1101111, 0x03 ),
+                date = i2c_read_byte_eeprom( 0b1101111, 0x04 ),
+                month = i2c_read_byte_eeprom( 0b1101111, 0x05 ),
+                year = i2c_read_byte_eeprom( 0b1101111, 0x06 );
+        
+        seconds = (seconds & 0xF) + ((seconds >> 4) & 0x7)*10;
+        minutes = (minutes & 0xF) + ((minutes >> 4) & 0x7)*10;
+        hours = (hours & 0xF) + ((hours >> 4) & 0x3)*10;
+        
+        wDay = wDay & 0x7;
+        date = (date & 0xF) + ((date >> 4) & 0x3)*10;
+        month = (month & 0xF) + ((month >> 4) & 0x1)*10;
+        year = (year & 0xF) + ((year >> 4) & 0xF)*10;
+        
+        memset( bufferOne, 0, sizeof( BUF_SIZE ) );
+        sprintf( bufferOne, "Time: %02d:%02d:%02d", hours, minutes, seconds );
+        
+//        sprintf( bufferOne, "M:%dU:%dD:%dR:%dL:%d", 
+//                            isMTouchButPressed( MID_B ), 
+//                            isMTouchButPressed( UP_B ), 
+//                            isMTouchButPressed( DOWN_B ),
+//                            isMTouchButPressed( RIGHT_B ), 
+//                            isMTouchButPressed( LEFT_B ) );
+        
+        memset( bufferTwo, 0, sizeof( BUF_SIZE ) );
+        sprintf( bufferTwo, "%s %02d.%02d.%02d", weekDay[wDay-1], year, month, date );
+        
+//        sprintf( bufferTwo, "POT:%d", 
+//                            potencReadVal() );
+        
         lcd_clear();
         lcd_setLineOne();
-        lcd_write_string( buffer );
-        delay_ms( 500 );
+        lcd_write_string( bufferOne );
         
-//        if ( freqVal > 500 )
-//        if ( T1GVAL )
-//        {
-//            LATA0 = 1;
-//        }
-//        else
-//        {
-//            LATA0 = 0;
-//        }
+        lcd_setLineTwo();
+        lcd_write_string( bufferTwo );
         
-
-
-//        for ( int i = 0; i < 6; i++ )
-//        {
-//            LATA |= 1 << i;
-//            delay_ms( 1000 );
-//        }
-//        LATA = 0b000000;
+        delay_ms( 50 );
     }
     return;
 }
 
-void restartTimers ( void )
-{
-    T1CONbits.TMR1ON = 0;
-    TMR1H = TMR1L = 0;
-    T1CONbits.TMR1ON = 1;
-    TMR0 = 0;
-}
-
 void interrupt tc_int(void)
 {
-    if ( TMR0IF )
-    {
-        freqVal = TMR1L | ((int)TMR1H << 8);
-        restartTimers();
-        TMR0IF = 0;
-    }
     
-    if ( TMR1GIF )
-    {
-        TMR1GIF = 0;
-    }
-    
-    if ( TMR0IF )
-    {
-        restartTimers();
-        TMR0IF = 0;
-    }
 } 

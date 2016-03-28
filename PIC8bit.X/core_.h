@@ -4,8 +4,18 @@
 #include <xc.h>
 #include <stdint.h>
 
+#define FOSC_        32000000ULL
+#define FCY         (FOSC_/4)
+
 void delay_ms ( uint16_t time_ms );
 void delay_us ( uint16_t time_us );
+
+void i2c_init( long Fscl );
+int8_t i2c_write_byte_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint8_t data);
+int8_t i2c_write_word_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint16_t data);
+int8_t i2c_write_bits_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint8_t bit_start, uint8_t length, uint8_t data);
+int8_t i2c_read_bytes_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint8_t *data, uint8_t lenght);
+uint8_t i2c_read_byte_eeprom(uint8_t slave_addr, uint8_t eeprom_addr);
 
 #endif	/* CORE_H_ */
 

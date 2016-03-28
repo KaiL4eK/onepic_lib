@@ -16,6 +16,7 @@
                    projectFiles="true">
       <itemPath>pmain.c</itemPath>
       <itemPath>LCD.c</itemPath>
+      <itemPath>twi.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
