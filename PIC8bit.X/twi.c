@@ -1,4 +1,12 @@
-#include "core_.h"
+/*
+ * File:   twi.c
+ * Author: Alex Devyatkin
+ *
+ */
+
+#include "core.h"
+
+static uint8_t i2c_initialized = 0;
 
 inline void i2c_idle( void )
 {
@@ -7,7 +15,7 @@ inline void i2c_idle( void )
             SSPCON2bits.ACKEN ) { }
 }
 
-void i2c_init( long Fscl )
+void i2c_init( uint32_t Fscl )
 {
    SSPCON1bits.SSPEN = 0;           // Disable I2C Mode
    SSPCON1bits.SSPM3 = 1;           // Set I2C Master
@@ -16,6 +24,12 @@ void i2c_init( long Fscl )
    
    SSPCON1bits.SSPEN = 1;           // Enable I2C Mode
    i2c_idle();
+   i2c_initialized = 1;
+}
+
+uint8_t i2c_isInitialized ( void )
+{
+    return( i2c_initialized );
 }
 
 inline void i2c_start( void )
@@ -132,7 +146,7 @@ int8_t i2c_write_byte_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint8_t da
     return( 0 );
 }
 
-int8_t i2c_write_word_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint16_t data)
+int8_t i2c_write_word_eeprom( uint8_t slave_addr, uint8_t eeprom_addr, uint16_t data )
 {
     i2c_start();                    //Generate Start COndition
     // Function send already has idle inside
@@ -156,7 +170,7 @@ int8_t i2c_write_word_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint16_t d
     return( 0 );
 }
 
-int8_t i2c_read_bytes_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint8_t *data, uint8_t lenght)
+int8_t i2c_read_bytes_eeprom( uint8_t slave_addr, uint8_t eeprom_addr, uint8_t *data, uint8_t lenght )
 {
     i2c_start();                    //Generate Start Condition
     if ( i2c_send_byte( (slave_addr << 1) | 0x0 ) != 0 )        //Write Control Byte

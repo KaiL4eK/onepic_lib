@@ -87,7 +87,6 @@ void lcd_init( void )
 {
     D3_ddr = D2_ddr = D1_ddr = D0_ddr = E_ddr = RS_ddr = 0;
     D3_bit = D2_bit = D1_bit = D0_bit = E_bit = RS_bit = 0;
-    ANSD0 = ANSD1 = ANSD2 = ANSD3 = 0;
     
     lcd_init_internal();
 
@@ -115,4 +114,3 @@ void lcd_setLineTwo ( void )
     lcd_write_instruction ( cmd_SetCursor | cmd_LineTwo );
     delay_us( 40 );
 }
-

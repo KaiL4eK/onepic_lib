@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=pmain.c LCD.c twi.c
+SOURCEFILES_QUOTED_IF_SPACED=pmain.c LCD.c twi.c timing.c RTC.c potentiometer.c mTouch.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/pmain.p1 ${OBJECTDIR}/LCD.p1 ${OBJECTDIR}/twi.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/pmain.p1.d ${OBJECTDIR}/LCD.p1.d ${OBJECTDIR}/twi.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/pmain.p1 ${OBJECTDIR}/LCD.p1 ${OBJECTDIR}/twi.p1 ${OBJECTDIR}/timing.p1 ${OBJECTDIR}/RTC.p1 ${OBJECTDIR}/potentiometer.p1 ${OBJECTDIR}/mTouch.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/pmain.p1.d ${OBJECTDIR}/LCD.p1.d ${OBJECTDIR}/twi.p1.d ${OBJECTDIR}/timing.p1.d ${OBJECTDIR}/RTC.p1.d ${OBJECTDIR}/potentiometer.p1.d ${OBJECTDIR}/mTouch.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/pmain.p1 ${OBJECTDIR}/LCD.p1 ${OBJECTDIR}/twi.p1
+OBJECTFILES=${OBJECTDIR}/pmain.p1 ${OBJECTDIR}/LCD.p1 ${OBJECTDIR}/twi.p1 ${OBJECTDIR}/timing.p1 ${OBJECTDIR}/RTC.p1 ${OBJECTDIR}/potentiometer.p1 ${OBJECTDIR}/mTouch.p1
 
 # Source Files
-SOURCEFILES=pmain.c LCD.c twi.c
+SOURCEFILES=pmain.c LCD.c twi.c timing.c RTC.c potentiometer.c mTouch.c
 
 
 CFLAGS=
@@ -105,6 +105,38 @@ ${OBJECTDIR}/twi.p1: twi.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/twi.d ${OBJECTDIR}/twi.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/twi.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
+${OBJECTDIR}/timing.p1: timing.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/timing.p1.d 
+	@${RM} ${OBJECTDIR}/timing.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/timing.p1  timing.c 
+	@-${MV} ${OBJECTDIR}/timing.d ${OBJECTDIR}/timing.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/timing.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/RTC.p1: RTC.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/RTC.p1.d 
+	@${RM} ${OBJECTDIR}/RTC.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/RTC.p1  RTC.c 
+	@-${MV} ${OBJECTDIR}/RTC.d ${OBJECTDIR}/RTC.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/RTC.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/potentiometer.p1: potentiometer.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/potentiometer.p1.d 
+	@${RM} ${OBJECTDIR}/potentiometer.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/potentiometer.p1  potentiometer.c 
+	@-${MV} ${OBJECTDIR}/potentiometer.d ${OBJECTDIR}/potentiometer.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/potentiometer.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/mTouch.p1: mTouch.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/mTouch.p1.d 
+	@${RM} ${OBJECTDIR}/mTouch.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/mTouch.p1  mTouch.c 
+	@-${MV} ${OBJECTDIR}/mTouch.d ${OBJECTDIR}/mTouch.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/mTouch.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 else
 ${OBJECTDIR}/pmain.p1: pmain.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -129,6 +161,38 @@ ${OBJECTDIR}/twi.p1: twi.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/twi.p1  twi.c 
 	@-${MV} ${OBJECTDIR}/twi.d ${OBJECTDIR}/twi.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/twi.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/timing.p1: timing.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/timing.p1.d 
+	@${RM} ${OBJECTDIR}/timing.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/timing.p1  timing.c 
+	@-${MV} ${OBJECTDIR}/timing.d ${OBJECTDIR}/timing.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/timing.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/RTC.p1: RTC.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/RTC.p1.d 
+	@${RM} ${OBJECTDIR}/RTC.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/RTC.p1  RTC.c 
+	@-${MV} ${OBJECTDIR}/RTC.d ${OBJECTDIR}/RTC.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/RTC.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/potentiometer.p1: potentiometer.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/potentiometer.p1.d 
+	@${RM} ${OBJECTDIR}/potentiometer.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/potentiometer.p1  potentiometer.c 
+	@-${MV} ${OBJECTDIR}/potentiometer.d ${OBJECTDIR}/potentiometer.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/potentiometer.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/mTouch.p1: mTouch.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/mTouch.p1.d 
+	@${RM} ${OBJECTDIR}/mTouch.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=24 --float=24 --opt=default,-asm,+asmfile,+speed,-space,-debug --addrqual=ignore --mode=free -P -N255 --warn=-3 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-osccal,-resetbits,-download,-stackcall,+clib --output=-mcof,+elf:multilocs --stack=compiled:auto:auto "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/mTouch.p1  mTouch.c 
+	@-${MV} ${OBJECTDIR}/mTouch.d ${OBJECTDIR}/mTouch.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/mTouch.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 

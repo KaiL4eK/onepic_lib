@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>LCD.h</itemPath>
       <itemPath>core_.h</itemPath>
+      <itemPath>pragmas.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -17,6 +18,10 @@
       <itemPath>pmain.c</itemPath>
       <itemPath>LCD.c</itemPath>
       <itemPath>twi.c</itemPath>
+      <itemPath>timing.c</itemPath>
+      <itemPath>RTC.c</itemPath>
+      <itemPath>potentiometer.c</itemPath>
+      <itemPath>mTouch.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
