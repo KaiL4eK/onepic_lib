@@ -7,6 +7,8 @@
 #define FOSC_       16000000ULL
 #define FCY         (FOSC_/2)
 
+#define SWITCH_OFF_ANALOGS AD1PCFGL = 0x1FFF;
+
 void delay_ms ( uint16_t time_ms );
 void delay_us ( uint16_t time_us );
 void pll_32MHz_init ( void );

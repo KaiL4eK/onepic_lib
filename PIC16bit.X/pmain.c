@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 int main(void) {
-    AD1PCFGL = 0x1FFF;
+    SWITCH_OFF_ANALOGS
     lcd_init();
     potnt_init();
     _TRISF6 = 0;

@@ -1,64 +1,62 @@
 /*
- * File:   twi.c
+ * File:   LCD.c
  * Author: Alex Devyatkin
  *
  */
 
 #include "core.h"
 
-static uint8_t i2c_initialized = 0;
-
 static inline void i2c_idle( void )
 {
     // Wait until I2C Bus is Inactive
-    while ( SSPCON2bits.SEN || SSPCON2bits.RSEN || SSPCON2bits.PEN || SSPCON2bits.RCEN ||
-            SSPCON2bits.ACKEN ) { }
+    while(I2C1CONbits.SEN || I2C1CONbits.RSEN || I2C1CONbits.PEN || I2C1CONbits.RCEN ||
+          I2C1CONbits.ACKEN || I2C1STATbits.TRSTAT) { }
 }
 
 static inline void i2c_start( void )
 {
     i2c_idle();                     //Ensure Module is Idle
-    SSPCON2bits.SEN = 1;	//Initiate Start condition
-    while ( SSPCON2bits.SEN );   
+    I2C1CONbits.SEN = 1;	//Initiate Start condition
+    while (I2C1CONbits.SEN);   
 }
 
 static inline void i2c_stop( void )
 {
     i2c_idle();                     //Ensure Module is Idle
     //initiate stop bit
-    SSPCON2bits.PEN = 1;    //Initiate stop bit
-    while ( SSPCON2bits.PEN );         // Wait for stop condition to finish
+    I2C1CONbits.PEN = 1;    //Initiate stop bit
+    while(I2C1CONbits.PEN);         // Wait for stop condition to finish
 }
 
 static inline void i2c_restart( void )
 {
     i2c_idle();                     //Ensure Module is Idle
-    SSPCON2bits.RSEN = 1;	//Initiate restart condition
-    while ( SSPCON2bits.RSEN );
+    I2C1CONbits.RSEN = 1;	//Initiate restart condition
+    while (I2C1CONbits.RSEN);
 }
 
 static inline void i2c_ack( void )
 {
     i2c_idle();                     //Ensure Module is Idle
-    SSPCON2bits.ACKDT = 0;          // Acknowledge data bit, 0 = ACK
-    SSPCON2bits.ACKEN = 1;          // Ack data enabled
-    while ( SSPCON2bits.ACKEN );       // wait for ack data to send on bus
+    I2C1CONbits.ACKDT = 0;          // Acknowledge data bit, 0 = ACK
+    I2C1CONbits.ACKEN = 1;          // Ack data enabled
+    while(I2C1CONbits.ACKEN);       // wait for ack data to send on bus
 }
 
 static inline void i2c_nack( void )
 {
     i2c_idle();                     //Ensure Module is Idle
-    SSPCON2bits.ACKDT = 1;          // Acknowledge data bit, 1 = NAK
-    SSPCON2bits.ACKEN = 1;          // Ack data enabled
-    while ( SSPCON2bits.ACKEN );       // wait for ack data to send on bus
+    I2C1CONbits.ACKDT = 1;          // Acknowledge data bit, 1 = NAK
+    I2C1CONbits.ACKEN = 1;          // Ack data enabled
+    while(I2C1CONbits.ACKEN);       // wait for ack data to send on bus
 }
 
 static inline int8_t i2c_send_byte(uint8_t data)
 {
     i2c_idle();                     //Ensure Module is Idle
-    SSPBUF = data;    
-    while ( SSPSTATbits.BF );       // wait till complete data is sent from buffer */
-    while ( SSPCON2bits.ACKSTAT ); 
+    I2C1TRN = data;    
+    while(I2C1STATbits.TBF);       // wait till complete data is sent from buffer */
+    while (I2C1STATbits.ACKSTAT); 
     i2c_idle();
     return( 0 );
 }
@@ -66,10 +64,10 @@ static inline int8_t i2c_send_byte(uint8_t data)
 static inline int8_t i2c_receive_byte(uint8_t *data)
 {
     i2c_idle();                     //Ensure Module is Idle
-    SSPCON2bits.RCEN = 1;        // Enable data reception
-    while ( SSPCON2bits.RCEN && !SSPSTATbits.BF );
+    I2C1CONbits.RCEN = 1;        // Enable data reception
+    while(I2C1CONbits.RCEN/* && !I2C1STATbits.BCL*/);
     i2c_idle();
-    *data = SSPBUF;
+    *data = I2C1RCV;
     return( 0 );
 }
 
@@ -111,19 +109,14 @@ static inline int8_t i2c_receive_bytes(uint8_t *str, uint8_t length)
 
 void i2c_init( uint32_t Fscl )
 {
-   SSPCON1bits.SSPEN = 0;           // Disable I2C Mode
-   SSPCON1bits.SSPM3 = 1;           // Set I2C Master
-   SSPCON1bits.SSPM2 = SSPCON1bits.SSPM1 = SSPCON1bits.SSPM0 = 0;
-   SSPADD = (FCY/Fscl) - 1;
+   I2C1CONbits.I2CEN = 0;           // Disable I2C Mode
+   I2C1BRG = ((100000000.0/Fscl - 13) * FCY / 100000000.0) - 2;
+   I2C1CONbits.A10M = 0;            // Disable 10 bit address
    
-   SSPCON1bits.SSPEN = 1;           // Enable I2C Mode
+   I2C1CONbits.DISSLW = 1;          // Disable slew rate control
+   IFS1bits.MI2C1IF = 0;            // Clear Interrupt
+   I2C1CONbits.I2CEN = 1;           // Enable I2C Mode
    i2c_idle();
-   i2c_initialized = 1;
-}
-
-uint8_t i2c_isInitialized ( void )
-{
-    return( i2c_initialized );
 }
 
 int8_t i2c_write_byte_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint8_t data)
@@ -146,7 +139,7 @@ int8_t i2c_write_byte_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint8_t da
     return( 0 );
 }
 
-int8_t i2c_write_word_eeprom( uint8_t slave_addr, uint8_t eeprom_addr, uint16_t data )
+int8_t i2c_write_word_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint16_t data)
 {
     i2c_start();                    //Generate Start COndition
     // Function send already has idle inside
@@ -170,7 +163,7 @@ int8_t i2c_write_word_eeprom( uint8_t slave_addr, uint8_t eeprom_addr, uint16_t 
     return( 0 );
 }
 
-int8_t i2c_read_bytes_eeprom( uint8_t slave_addr, uint8_t eeprom_addr, uint8_t *data, uint8_t lenght )
+int8_t i2c_read_bytes_eeprom(uint8_t slave_addr, uint8_t eeprom_addr, uint8_t *data, uint8_t lenght)
 {
     i2c_start();                    //Generate Start Condition
     if ( i2c_send_byte( (slave_addr << 1) | 0x0 ) != 0 )        //Write Control Byte

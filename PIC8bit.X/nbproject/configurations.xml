@@ -5,8 +5,8 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>LCD.h</itemPath>
-      <itemPath>core_.h</itemPath>
       <itemPath>pragmas.h</itemPath>
+      <itemPath>core.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
