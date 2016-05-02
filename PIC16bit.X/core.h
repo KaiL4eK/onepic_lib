@@ -29,5 +29,22 @@ void lcd_setLineTwo ( void );
 void potnt_init ( void );
 int16_t potnt_get_value ( void );
 
+typedef struct
+{
+    uint8_t tm_sec,
+            tm_min,
+            tm_hour,
+            tm_mday,
+            tm_mon,
+            tm_year,
+            tm_wday,
+            tm_yday,
+            tm_isdst;
+} time_t;
+
+void rtc_init ( void );
+void rtc_receive_time ( void );
+time_t *rtc_get_raw_data ( void );
+
 #endif	/* CORE_H_ */
 

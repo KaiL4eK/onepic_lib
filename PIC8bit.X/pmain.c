@@ -4,9 +4,9 @@
  *
  */
 
-#include "LCD.h"
 #include "core.h"
 #include "pragmas.h"
+
 
 void main( void ) 
 {  
@@ -14,7 +14,7 @@ void main( void )
     lcd_init();
 //    mTouch_init();
     potnt_init();
-//    i2c_init( 400000L );
+    i2c_init( 400000L );
     
     TRISA &= 0b11000000;
     
@@ -33,5 +33,4 @@ void main( void )
         
         delay_ms( 50 );
     }
-    return;
 }

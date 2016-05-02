@@ -40,5 +40,22 @@ typedef enum
 void mTouch_init ( uint8_t ledMode );
 int mTouch_isButtonPressed ( CapButtons_t button );
 
+typedef struct
+{
+    uint8_t tm_sec,
+            tm_min,
+            tm_hour,
+            tm_mday,
+            tm_mon,
+            tm_year,
+            tm_wday,
+            tm_yday,
+            tm_isdst;
+} time_t;
+
+void rtc_init ( void );
+void rtc_receive_time ( void );
+time_t *rtc_get_raw_data ( void );
+
 #endif	/* CORE_H_ */
 

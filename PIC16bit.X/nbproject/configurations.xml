@@ -20,6 +20,7 @@
       <itemPath>potentiometer.c</itemPath>
       <itemPath>LCD.c</itemPath>
       <itemPath>i2c.c</itemPath>
+      <itemPath>RTC.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
