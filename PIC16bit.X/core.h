@@ -3,11 +3,7 @@
 
 #include <xc.h>
 #include <stdint.h>
-
-#define FOSC_       16000000ULL
-#define FCY         (FOSC_/2)
-
-#define SWITCH_OFF_ANALOGS AD1PCFGL = 0x1FFF;
+#include "freq.h"
 
 void delay_ms ( uint16_t time_ms );
 void delay_us ( uint16_t time_us );
@@ -47,4 +43,9 @@ void rtc_receive_time ( void );
 time_t *rtc_get_raw_data ( void );
 
 #endif	/* CORE_H_ */
+
+
+
+
+
 

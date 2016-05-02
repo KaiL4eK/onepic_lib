@@ -8,6 +8,8 @@
 #include "pragmas.h"
 #include <stdio.h>
 
+#define SWITCH_OFF_ANALOGS AD1PCFGL = 0x1FFF;
+
 int main ( void ) 
 {
     SWITCH_OFF_ANALOGS
@@ -28,7 +30,7 @@ int main ( void )
 //        _LATF6 = 0;
 //        lcd_clear();
 //        lcd_write_string( "Bye!" );
-        time_str_t *time_data = rtc_get_raw_data();
+        time_t *time_data = rtc_get_raw_data();
 //        int16_t pVal = potnt_get_value();
         char    buf[16];
         

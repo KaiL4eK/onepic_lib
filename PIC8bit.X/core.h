@@ -3,9 +3,7 @@
 
 #include <xc.h>
 #include <stdint.h>
-
-#define FOSC_       32000000ULL
-#define FCY         (FOSC_/4)
+#include "freq.h"
 
 void delay_ms ( uint16_t time_ms );
 void delay_us ( uint16_t time_us );

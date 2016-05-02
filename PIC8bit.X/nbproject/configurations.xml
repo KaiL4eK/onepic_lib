@@ -7,6 +7,7 @@
       <itemPath>LCD.h</itemPath>
       <itemPath>pragmas.h</itemPath>
       <itemPath>core.h</itemPath>
+      <itemPath>freq.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
