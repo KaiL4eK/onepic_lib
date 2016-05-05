@@ -2,7 +2,6 @@
  * File:   potentiometer.c
  * Author: alexey
  *
- * Created on May 1, 2016, 10:48 PM
  */
 
 #include "core.h"

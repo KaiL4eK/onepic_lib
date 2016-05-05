@@ -25,6 +25,9 @@ void lcd_setLineTwo ( void );
 void potnt_init ( void );
 int16_t potnt_get_value ( void );
 
+void pwm_init ( uint16_t period_ms );
+void pwm_set_dutyCycle_percent ( uint8_t percentage );
+
 typedef struct
 {
     uint8_t tm_sec,
