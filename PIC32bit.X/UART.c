@@ -4,22 +4,24 @@
 /*              UART            */
 /********************************/
 
-#define BUFFER_MAX_SIZE 512
+// Connection to PTP16 = RX
+//               PTP17 = TX
 
-void UART_write_byte( uint8_t elem );
+#define BUFFER_MAX_SIZE 512
 
 char UART_buffer[BUFFER_MAX_SIZE];
 
 void UART_init( UART_speed_t UART_br )
 {
-	U1BMODEbits.ON = 0;	// Bit15 TX, RX DISABLED, ENABLE at end of func
-	U1BMODEbits.UARTEN = 0;		// Bits8,9 TX,RX enabled, CTS,RTS not
+	U1BMODEbits.ON = 0;
+	U1BMODEbits.UARTEN = 0;
 	U1BBRG = UART_br;
-//    IEC2bits.U1BRXIE = 1;
-//    IFS2bits.U1BRXIF = 0;
+    IEC2bits.U1BRXIE = 1;
+    IFS2bits.U1BRXIF = 0;
     
-	U1BMODEbits.ON = 1;	// And turn the peripheral on
+	U1BMODEbits.ON = 1;
 	U1BSTAbits.UTXEN = 1;
+    U1BSTAbits.URXEN = 1;
 }
 
 uint8_t input_command = 0;

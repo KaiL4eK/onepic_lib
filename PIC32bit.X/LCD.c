@@ -13,10 +13,13 @@ char *secondLineTest = "Second Line =(";
 
 static void lcd_write ( uint8_t theByte )
 { 
-    D3_bit = theByte & 1 << 3 ? 1 : 0;
-    D2_bit = theByte & 1 << 2 ? 1 : 0;
-    D1_bit = theByte & 1 << 1 ? 1 : 0;
-    D0_bit = theByte & 1 << 0 ? 1 : 0;
+    D_port &= ~0x0F;
+    D_port |= theByte & 0x0F;
+    
+//    D3_bit = theByte & 1 << 3 ? 1 : 0;
+//    D2_bit = theByte & 1 << 2 ? 1 : 0;
+//    D1_bit = theByte & 1 << 1 ? 1 : 0;
+//    D0_bit = theByte & 1 << 0 ? 1 : 0;
 
     E_bit = 1;
     delay_us( 1 );
@@ -86,7 +89,8 @@ void lcd_write_string ( char *string )
 void lcd_init( void )
 {
     D3_ddr = D2_ddr = D1_ddr = D0_ddr = E_ddr = RS_ddr = 0;
-    D3_bit = D2_bit = D1_bit = D0_bit = E_bit = RS_bit = 0;
+//    D3_bit = D2_bit = D1_bit = D0_bit = E_bit = RS_bit = 0;
+    E_bit = RS_bit = 0;
     
     lcd_init_internal();
 

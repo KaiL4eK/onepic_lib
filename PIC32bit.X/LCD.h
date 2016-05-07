@@ -1,15 +1,11 @@
 #ifndef LCD_H_
 #define	LCD_H_
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
 #include <xc.h>
 
-// D7-D4 pins
+// D3-D0 pins
+#define D_port      LATE
+
 #define D3_bit      _LATE3
 #define D3_ddr      _TRISE3
 
