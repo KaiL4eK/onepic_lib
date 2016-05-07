@@ -19,7 +19,7 @@ void delay_ms ( uint16_t time_ms )
 //10 = 1:64 prescale value
 //01 = 1:8 prescale value
 //00 = 1:1 prescale value
-    T1CONbits.TCKPS = 0b01;    // Настройка на делителе 64
+    T1CONbits.TCKPS = 0b01;    // Настройка на делителе 8
     PR1 = SYS_CLK/8/1000;      // Расчет на работу таймера до переполенния в течении 1 мс
                                // FCY / Div * 0.001 sec
     IEC0bits.T1IE = 1;

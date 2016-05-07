@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=pmain.c timing.c potentiometer.c LCD.c i2c.c RTC.c pwm.c
+SOURCEFILES_QUOTED_IF_SPACED=pmain.c timing.c potentiometer.c LCD.c i2c.c RTC.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/pmain.o ${OBJECTDIR}/timing.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/RTC.o ${OBJECTDIR}/pwm.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/pmain.o.d ${OBJECTDIR}/timing.o.d ${OBJECTDIR}/potentiometer.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/RTC.o.d ${OBJECTDIR}/pwm.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/pmain.o ${OBJECTDIR}/timing.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/RTC.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/pmain.o.d ${OBJECTDIR}/timing.o.d ${OBJECTDIR}/potentiometer.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/RTC.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/pmain.o ${OBJECTDIR}/timing.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/RTC.o ${OBJECTDIR}/pwm.o
+OBJECTFILES=${OBJECTDIR}/pmain.o ${OBJECTDIR}/timing.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/RTC.o
 
 # Source Files
-SOURCEFILES=pmain.c timing.c potentiometer.c LCD.c i2c.c RTC.c pwm.c
+SOURCEFILES=pmain.c timing.c potentiometer.c LCD.c i2c.c RTC.c
 
 
 CFLAGS=
@@ -124,13 +124,6 @@ ${OBJECTDIR}/RTC.o: RTC.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE)  RTC.c  -o ${OBJECTDIR}/RTC.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/RTC.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -legacy-libc  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/RTC.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/pwm.o: pwm.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pwm.o.d 
-	@${RM} ${OBJECTDIR}/pwm.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  pwm.c  -o ${OBJECTDIR}/pwm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pwm.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -legacy-libc  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/pwm.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 else
 ${OBJECTDIR}/pmain.o: pmain.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -173,13 +166,6 @@ ${OBJECTDIR}/RTC.o: RTC.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/RTC.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  RTC.c  -o ${OBJECTDIR}/RTC.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/RTC.o.d"        -g -omf=elf -legacy-libc  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/RTC.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/pwm.o: pwm.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pwm.o.d 
-	@${RM} ${OBJECTDIR}/pwm.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  pwm.c  -o ${OBJECTDIR}/pwm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pwm.o.d"        -g -omf=elf -legacy-libc  -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/pwm.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 

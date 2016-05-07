@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=pmain.c timing.c LCD.c i2c.c potentiometer.c RTC.c
+SOURCEFILES_QUOTED_IF_SPACED=pmain.c timing.c LCD.c i2c.c potentiometer.c RTC.c UART.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/pmain.o ${OBJECTDIR}/timing.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/RTC.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/pmain.o.d ${OBJECTDIR}/timing.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/potentiometer.o.d ${OBJECTDIR}/RTC.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/pmain.o ${OBJECTDIR}/timing.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/RTC.o ${OBJECTDIR}/UART.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/pmain.o.d ${OBJECTDIR}/timing.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/potentiometer.o.d ${OBJECTDIR}/RTC.o.d ${OBJECTDIR}/UART.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/pmain.o ${OBJECTDIR}/timing.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/RTC.o
+OBJECTFILES=${OBJECTDIR}/pmain.o ${OBJECTDIR}/timing.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/RTC.o ${OBJECTDIR}/UART.o
 
 # Source Files
-SOURCEFILES=pmain.c timing.c LCD.c i2c.c potentiometer.c RTC.c
+SOURCEFILES=pmain.c timing.c LCD.c i2c.c potentiometer.c RTC.c UART.c
 
 
 CFLAGS=
@@ -130,6 +130,12 @@ ${OBJECTDIR}/RTC.o: RTC.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/RTC.o 
 	@${FIXDEPS} "${OBJECTDIR}/RTC.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/RTC.o.d" -o ${OBJECTDIR}/RTC.o RTC.c     
 	
+${OBJECTDIR}/UART.o: UART.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/UART.o.d 
+	@${RM} ${OBJECTDIR}/UART.o 
+	@${FIXDEPS} "${OBJECTDIR}/UART.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/UART.o.d" -o ${OBJECTDIR}/UART.o UART.c     
+	
 else
 ${OBJECTDIR}/pmain.o: pmain.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -166,6 +172,12 @@ ${OBJECTDIR}/RTC.o: RTC.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/RTC.o.d 
 	@${RM} ${OBJECTDIR}/RTC.o 
 	@${FIXDEPS} "${OBJECTDIR}/RTC.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/RTC.o.d" -o ${OBJECTDIR}/RTC.o RTC.c     
+	
+${OBJECTDIR}/UART.o: UART.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/UART.o.d 
+	@${RM} ${OBJECTDIR}/UART.o 
+	@${FIXDEPS} "${OBJECTDIR}/UART.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/UART.o.d" -o ${OBJECTDIR}/UART.o UART.c     
 	
 endif
 

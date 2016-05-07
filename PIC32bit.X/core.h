@@ -17,6 +17,21 @@ int8_t i2c_write_bits_eeprom( uint8_t slave_addr, uint8_t eeprom_addr, uint8_t b
 int8_t i2c_read_bytes_eeprom( uint8_t slave_addr, uint8_t eeprom_addr, uint8_t *data, uint8_t lenght );
 uint8_t i2c_read_byte_eeprom( uint8_t slave_addr, uint8_t eeprom_addr );
 
+typedef enum
+{
+    UART_115200 = 42,
+    UART_57600 = 86,
+    UART_38400 = 129,
+    UART_19200 = 259,
+    UART_9600 = 520
+}UART_speed_t;
+
+void UART_init( UART_speed_t UART_br );
+void UART_write_words( uint16_t *arr, uint8_t count );
+void UART_write_string( const char *fstring, ... );
+void UART_write_byte( uint8_t elem );
+uint8_t UART_get_last_received_command();
+
 void lcd_init( void );
 void lcd_write_string ( char * );
 void lcd_clear ( void );
