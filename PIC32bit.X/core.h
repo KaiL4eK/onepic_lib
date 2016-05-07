@@ -4,7 +4,14 @@
 #include <xc.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
 #include "freq.h"
+
+/* Provide C++ Compatibility */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void delay_ms ( uint16_t time_ms );
 void delay_us ( uint16_t time_us );
@@ -57,6 +64,11 @@ typedef struct
 void rtc_init ( void );
 void rtc_receive_time ( void );
 time_t *rtc_get_raw_data ( void );
+
+    /* Provide C++ Compatibility */
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* CORE_H_ */
 
