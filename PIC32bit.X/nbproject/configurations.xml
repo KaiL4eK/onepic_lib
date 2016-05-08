@@ -23,8 +23,8 @@
       <itemPath>potentiometer.c</itemPath>
       <itemPath>RTC.c</itemPath>
       <itemPath>UART.c</itemPath>
-      <itemPath>pmain.cpp</itemPath>
       <itemPath>gy85.cpp</itemPath>
+      <itemPath>pmain.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -127,7 +127,7 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="heap-size" value="128"/>
+        <property key="heap-size" value="4096"/>
         <property key="input-libraries" value=""/>
         <property key="linker-symbols" value=""/>
         <property key="map-file" value="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
@@ -141,6 +141,7 @@
         <property key="symbol-stripping" value=""/>
         <property key="trace-symbols" value=""/>
         <property key="warn-section-align" value="false"/>
+        <appendMe value="-lm"/>
       </C32-LD>
       <C32CPP>
         <property key="additional-warnings" value="false"/>
@@ -171,8 +172,8 @@
       <C32Global>
         <property key="common-include-directories" value=""/>
         <property key="gp-relative-option" value=""/>
-        <property key="legacy-libc" value="false"/>
-        <property key="relaxed-math" value="true"/>
+        <property key="legacy-libc" value="true"/>
+        <property key="relaxed-math" value="false"/>
         <property key="save-temps" value="false"/>
         <property key="wpo-lto" value="false"/>
       </C32Global>
@@ -224,6 +225,7 @@
         <property key="UART5" value="true"/>
         <property key="UART6" value="true"/>
         <property key="USB" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -257,7 +259,7 @@
         <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
         <property key="programoptions.usehighvoltageonmclr" value="false"/>
         <property key="programoptions.uselvpprogramming" value="false"/>
-        <property key="voltagevalue" value="3.375"/>
+        <property key="voltagevalue" value="3.5"/>
       </PICkit3PlatformTool>
     </conf>
   </confs>

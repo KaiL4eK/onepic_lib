@@ -3,10 +3,14 @@
 
 #include <xc.h>
 #include <stdint.h>
+//#include <stdarg.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
+#include <float.h>
 #include "freq.h"
+
+//#define	M_PI		3.14159265358979323846
 
 /* Provide C++ Compatibility */
 #ifdef __cplusplus
@@ -65,7 +69,7 @@ void rtc_init ( void );
 void rtc_receive_time ( void );
 time_t *rtc_get_raw_data ( void );
 
-    /* Provide C++ Compatibility */
+/* Provide C++ Compatibility */
 #ifdef __cplusplus
 }
 #endif

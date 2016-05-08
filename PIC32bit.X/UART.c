@@ -67,7 +67,7 @@ void UART_write_string( const char *fstring, ... )
     va_list str_args;
     
     va_start( str_args, fstring );
-    vsprintf( UART_buffer, fstring, str_args );
+    vsnprintf( UART_buffer, BUFFER_MAX_SIZE, fstring, str_args );
     va_end( str_args );
     
     while( UART_buffer[iter] != '\0' )

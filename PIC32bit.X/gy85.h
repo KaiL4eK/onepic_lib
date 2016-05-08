@@ -81,8 +81,6 @@
 #define PLL_EXTERNAL32      4   // 32.768 kHz
 #define PLL_EXTERNAL19      5   // 19.2 Mhz
 
-typedef uint8_t byte;
-
 class ITG3200 {
 
 public:
@@ -93,19 +91,19 @@ public:
   
   // Gyro initialization
   void init(unsigned int address);
-  void init(unsigned int address, byte _SRateDiv, byte _Range, byte _filterBW, byte _ClockSrc, bool _ITGReady, bool _INTRawDataReady);      
+  void init(unsigned int address, uint8_t _SRateDiv, uint8_t _Range, uint8_t _filterBW, uint8_t _ClockSrc, bool _ITGReady, bool _INTRawDataReady);      
     
   // Who Am I
-  byte getDevAddr();
+  uint8_t getDevAddr();
   void setDevAddr(unsigned int _addr);
   // Sample Rate Divider
-  byte getSampleRateDiv();          
-  void setSampleRateDiv(byte _SampleRate);
+  uint8_t getSampleRateDiv();          
+  void setSampleRateDiv(uint8_t _SampleRate);
   // Digital Low Pass Filter BandWidth and SampleRate 
-  byte getFSRange();
-  void setFSRange(byte _Range); // RANGE2000
-  byte getFilterBW(); 
-  void setFilterBW(byte _BW); // see register parameters above
+  uint8_t getFSRange();
+  void setFSRange(uint8_t _Range); // RANGE2000
+  uint8_t getFilterBW(); 
+  void setFilterBW(uint8_t _BW); // see register parameters above
   // Interrupt Configuration
   bool isINTActiveOnLow();
   void setINTLogiclvl(bool _State); //ACTIVE_ONHIGH, ACTIVE_ONLOW
@@ -147,8 +145,8 @@ public:
   void setXgyroStandby(bool _Status); // NORMAL, STANDBY
   void setYgyroStandby(bool _Status);
   void setZgyroStandby(bool _Status);
-  byte getClockSource();
-  void setClockSource(byte _CLKsource); // see register parameters above
+  uint8_t getClockSource();
+  void setClockSource(uint8_t _CLKsource); // see register parameters above
   
   void writemem(uint8_t _addr, uint8_t _val);
   void readmem(uint8_t _addr, uint8_t _nbytes, uint8_t __buff[]);
@@ -249,13 +247,13 @@ class ADXL345
 public:
 	bool status;           // set when error occurs 
 	// see error code for details
-	byte error_code;       // Initial state
+	uint8_t error_code;       // Initial state
 	double gains[3];        // counts to Gs
 	
 	ADXL345();
 	void powerOn();
-	void readAccel(int* xyx);
-	void readAccel(int* x, int* y, int* z);
+	void readAccel(int16_t* xyx);
+	void readAccel(int16_t* x, int16_t* y, int16_t* z);
 	void get_Gxyz(double *xyz);
 	
 	void setTapThreshold(int tapThreshold);
@@ -320,22 +318,22 @@ public:
 	void setLowPower(bool state);
 	double getRate();
 	void setRate(double rate);
-	void set_bw(byte bw_code);
-	byte get_bw_code();  
+	void set_bw(uint8_t bw_code);
+	uint8_t get_bw_code();  
 	
 	
-	bool triggered(byte interrupts, int mask);
+	bool triggered(uint8_t interrupts, int mask);
 	
 	
-	byte getInterruptSource();
-	bool getInterruptSource(byte interruptBit);
-	bool getInterruptMapping(byte interruptBit);
-	void setInterruptMapping(byte interruptBit, bool interruptPin);
-	bool isInterruptEnabled(byte interruptBit);
-	void setInterrupt(byte interruptBit, bool state);
+	uint8_t getInterruptSource();
+	bool getInterruptSource(uint8_t interruptBit);
+	bool getInterruptMapping(uint8_t interruptBit);
+	void setInterruptMapping(uint8_t interruptBit, bool interruptPin);
+	bool isInterruptEnabled(uint8_t interruptBit);
+	void setInterrupt(uint8_t interruptBit, bool state);
 	
-	void getRangeSetting(byte* rangeSetting);
-	void setRangeSetting(int val);
+	void getRangeSetting(uint8_t* rangeSetting);
+	void setRangeSetting(uint8_t val);
 	bool getSelfTestBit();
 	void setSelfTestBit(bool selfTestBit);
 	bool getSpiBit();
@@ -349,12 +347,12 @@ public:
 	void printAllRegister();
 	
 private:
-	void writeTo(byte address, byte val);
-	void readFrom(byte address, int num, byte buff[]);
-	void setRegisterBit(byte regAdress, int bitPos, bool state);
-	bool getRegisterBit(byte regAdress, int bitPos);  
-	byte _buff[6] ;    //6 bytes buffer for saving data read from the device
+	void writeTo(uint8_t address, uint8_t val);
+	void readFrom(uint8_t address, int num, uint8_t buff[]);
+	void setRegisterBit(uint8_t regAdress, int bitPos, bool state);
+	bool getRegisterBit(uint8_t regAdress, int bitPos);  
+	uint8_t _buff[6] ;    //6 bytes buffer for saving data read from the device
 };
-void print_byte(byte val);
+void print_byte(uint8_t val);
 
 #endif /* GY85_H_ */
