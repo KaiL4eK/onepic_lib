@@ -6,8 +6,8 @@
             <name>PIC32bit</name>
             <creation-uuid>992d9c3f-87b3-4cf4-bff2-c77432d6d9e9</creation-uuid>
             <make-project-type>0</make-project-type>
-            <c-extensions>c</c-extensions>
-            <cpp-extensions>cpp</cpp-extensions>
+            <c-extensions>c,cpp</c-extensions>
+            <cpp-extensions/>
             <header-extensions>h</header-extensions>
             <asminc-extensions/>
             <sourceEncoding>UTF-8</sourceEncoding>

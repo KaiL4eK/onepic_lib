@@ -3,14 +3,10 @@
 
 #include <xc.h>
 #include <stdint.h>
-//#include <stdarg.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
-#include <float.h>
 #include "freq.h"
-
-//#define	M_PI		3.14159265358979323846
 
 /* Provide C++ Compatibility */
 #ifdef __cplusplus
