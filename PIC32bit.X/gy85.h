@@ -126,13 +126,13 @@ public:
   bool isRawDataReady();
   // Gyro Sensors
   void readTemp(float *_Temp);  
-  void readGyroRaw( int *_GyroX, int *_GyroY, int *_GyroZ); // uncalibrated raw values
-  void readGyroRaw( int *_GyroXYZ); // uncalibrated raw values
+  void readGyroRaw( int16_t *_GyroX, int16_t *_GyroY, int16_t *_GyroZ); // uncalibrated raw values
+  void readGyroRaw( int16_t *_GyroXYZ); // uncalibrated raw values
   void setScaleFactor(float _Xcoeff, float _Ycoeff, float _Zcoeff, bool _Radians);  // negative ciefficient = Reversed
   void setOffsets(int _Xoffset, int _Yoffset, int _Zoffset);
   void zeroCalibrate(unsigned int totSamples, unsigned int sampleDelayMS);	// assuming gyroscope is stationary (updates XYZ offsets)
-  void readGyroRawCal(int *_GyroX, int *_GyroY, int *_GyroZ); // raw value with offset
-  void readGyroRawCal(int *_GyroXYZ); // raw value with offset
+  void readGyroRawCal(int16_t *_GyroX, int16_t *_GyroY, int16_t *_GyroZ); // raw value with offset
+  void readGyroRawCal(int16_t *_GyroXYZ); // raw value with offset
   void readGyro(float *_GyroX, float *_GyroY, float *_GyroZ); // deg/sec calibrated & ScaleFactor 
   void readGyro(float *_GyroXYZ); // deg/sec calibrated & ScaleFactor  
   // Power management
@@ -353,6 +353,5 @@ private:
 	bool getRegisterBit(uint8_t regAdress, int bitPos);  
 	uint8_t _buff[6] ;    //6 bytes buffer for saving data read from the device
 };
-void print_byte(uint8_t val);
 
 #endif /* GY85_H_ */

@@ -56,9 +56,7 @@ void ADXL345::readFrom(uint8_t address, int num, uint8_t _buff[]) {
 // it can be 2, 4, 8 or 16
 void ADXL345::getRangeSetting ( uint8_t* rangeSetting ) 
 {
-	uint8_t _b;
-	readFrom(ADXL345_DATA_FORMAT, 1, &_b);
-	*rangeSetting = _b & 0b00000011;
+	*rangeSetting = i2c_read_byte_eeprom( ADXL345_DEVICE, ADXL345_DATA_FORMAT ) & 0b11;
 }
 
 // Sets the range setting, possible values are: 2, 4, 8, 16
@@ -83,514 +81,283 @@ void ADXL345::setRangeSetting ( uint8_t val )
 	}
     i2c_write_bits_eeprom( ADXL345_DEVICE, ADXL345_DATA_FORMAT, 1, 2, range );
 }
-// gets the state of the SELF_TEST bit
-bool ADXL345::getSelfTestBit() {
-	return getRegisterBit(ADXL345_DATA_FORMAT, 7);
-}
-
-// Sets the SELF-TEST bit
-// if set to 1 it applies a self-test force to the sensor causing a shift in the output data
-// if set to 0 it disables the self-test force
-void ADXL345::setSelfTestBit(bool selfTestBit) {
-	setRegisterBit(ADXL345_DATA_FORMAT, 7, selfTestBit);
-}
-
-// Gets the state of the SPI bit
-bool ADXL345::getSpiBit() {
-	return getRegisterBit(ADXL345_DATA_FORMAT, 6);
-}
 
-// Sets the SPI bit
-// if set to 1 it sets the device to 3-wire mode
-// if set to 0 it sets the device to 4-wire SPI mode
-void ADXL345::setSpiBit(bool spiBit) {
-	setRegisterBit(ADXL345_DATA_FORMAT, 6, spiBit);
+ITG3200::ITG3200() {
+  setOffsets(0,0,0);
+  setScaleFactor(1.0, 1.0, 1.0, false);  // true to change readGyro output to radians
+  //Wire.begin();       //Normally this code is called from setup() at user code
+                        //but some people reported that joining I2C bus earlier
+                        //apparently solved problems with master/slave conditions.
+                        //Uncomment if needed.
 }
 
-// Gets the state of the INT_INVERT bit
-bool ADXL345::getInterruptLevelBit() {
-	return getRegisterBit(ADXL345_DATA_FORMAT, 5);
+void ITG3200::init(unsigned int  address) {
+  // Uncomment or change your default ITG3200 initialization
+  
+  // fast sample rate - divisor = 0 filter = 0 clocksrc = 0, 1, 2, or 3  (raw values)
+  init(address, NOSRDIVIDER, RANGE2000, BW256_SR8, PLL_XGYRO_REF, true, true);
+  
+  // slow sample rate - divisor = 0  filter = 1,2,3,4,5, or 6  clocksrc = 0, 1, 2, or 3  (raw values)
+  //init(NOSRDIVIDER, RANGE2000, BW010_SR1, INTERNALOSC, true, true);
+  
+  // fast sample rate 32Khz external clock - divisor = 0  filter = 0  clocksrc = 4  (raw values)
+  //init(NOSRDIVIDER, RANGE2000, BW256_SR8, PLL_EXTERNAL32, true, true);
+  
+  // slow sample rate 32Khz external clock - divisor = 0  filter = 1,2,3,4,5, or 6  clocksrc = 4  (raw values)
+  //init(NOSRDIVIDER, RANGE2000, BW010_SR1, PLL_EXTERNAL32, true, true);
 }
 
-// Sets the INT_INVERT bit
-// if set to 0 sets the interrupts to active high
-// if set to 1 sets the interrupts to active low
-void ADXL345::setInterruptLevelBit(bool interruptLevelBit) {
-	setRegisterBit(ADXL345_DATA_FORMAT, 5, interruptLevelBit);
+void ITG3200::init(unsigned int address, uint8_t _SRateDiv, uint8_t _Range, uint8_t _filterBW, uint8_t _ClockSrc, bool _ITGReady, bool _INTRawDataReady) {
+  _dev_address = address;
+  setSampleRateDiv(_SRateDiv);
+  setFSRange(_Range);
+  setFilterBW(_filterBW);
+  setClockSource(_ClockSrc);
+  setITGReady(_ITGReady);
+  setRawDataReady(_INTRawDataReady);  
+  delay_ms(GYROSTART_UP_DELAY);  // startup 
 }
 
-// Gets the state of the FULL_RES bit
-bool ADXL345::getFullResBit() {
-	return getRegisterBit(ADXL345_DATA_FORMAT, 3);
+uint8_t ITG3200::getDevAddr() {
+  /*readmem(WHO_AM_I, 1, &_buff[0]); 
+  return _buff[0];  */
+  return _dev_address;
 }
 
-// Sets the FULL_RES bit
-// if set to 1, the device is in full resolution mode, where the output resolution increases with the
-//   g range set by the range bits to maintain a 4mg/LSB scal factor
-// if set to 0, the device is in 10-bit mode, and the range buts determine the maximum g range
-//   and scale factor
-void ADXL345::setFullResBit(bool fullResBit) {
-	setRegisterBit(ADXL345_DATA_FORMAT, 3, fullResBit);
+void ITG3200::setDevAddr(unsigned int  _addr) {
+  writemem(WHO_AM_I, _addr); 
+  _dev_address = _addr;
 }
 
-// Gets the state of the justify bit
-bool ADXL345::getJustifyBit() {
-	return getRegisterBit(ADXL345_DATA_FORMAT, 2);
+uint8_t ITG3200::getSampleRateDiv() {
+  readmem(SMPLRT_DIV, 1, &_buff[0]);
+  return _buff[0];
 }
 
-// Sets the JUSTIFY bit
-// if sets to 1 selects the left justified mode
-// if sets to 0 selects right justified mode with sign extension
-void ADXL345::setJustifyBit(bool justifyBit) {
-	setRegisterBit(ADXL345_DATA_FORMAT, 2, justifyBit);
+void ITG3200::setSampleRateDiv(uint8_t _SampleRate) {
+  writemem(SMPLRT_DIV, _SampleRate);
 }
 
-int constrain ( int var, int min, int max )
-{
-    if ( var > 255 )
-        return( 255 );
-    else if ( var < 0 )
-        return( 0 );
-    return( var );
-}
-
-// Sets the THRESH_TAP byte value
-// it should be between 0 and 255
-// the scale factor is 62.5 mg/LSB
-// A value of 0 may result in undesirable behavior
-void ADXL345::setTapThreshold(int tapThreshold) {
-	tapThreshold = constrain(tapThreshold,0,255);
-	uint8_t _b = uint8_t (tapThreshold);
-	writeTo(ADXL345_THRESH_TAP, _b);  
-}
-
-// Gets the THRESH_TAP byte value
-// return value is comprised between 0 and 255
-// the scale factor is 62.5 mg/LSB
-int ADXL345::getTapThreshold() {
-	uint8_t _b;
-	readFrom(ADXL345_THRESH_TAP, 1, &_b);  
-	return int (_b);
+uint8_t ITG3200::getFSRange() {
+  readmem(DLPF_FS, 1, &_buff[0]);
+  return ((_buff[0] & DLPFFS_FS_SEL) >> 3);
 }
 
-// set/get the gain for each axis in Gs / count
-void ADXL345::setAxisGains(double *_gains){
-	int i;
-	for(i = 0; i < 3; i++){
-		gains[i] = _gains[i];
-	}
+void ITG3200::setFSRange(uint8_t _Range) {
+  readmem(DLPF_FS, 1, &_buff[0]);   
+  writemem(DLPF_FS, ((_buff[0] & ~DLPFFS_FS_SEL) | (_Range << 3)) ); 
 }
-void ADXL345::getAxisGains(double *_gains){
-	int i;
-	for(i = 0; i < 3; i++){
-		_gains[i] = gains[i];
-	}
-}
-
-
-// Sets the OFSX, OFSY and OFSZ bytes
-// OFSX, OFSY and OFSZ are user offset adjustments in twos complement format with
-// a scale factor of 15,6mg/LSB
-// OFSX, OFSY and OFSZ should be comprised between 
-void ADXL345::setAxisOffset(int x, int y, int z) {
-	writeTo(ADXL345_OFSX, uint8_t (x));  
-	writeTo(ADXL345_OFSY, uint8_t (y));  
-	writeTo(ADXL345_OFSZ, uint8_t (z));  
-}
-
-// Gets the OFSX, OFSY and OFSZ bytes
-void ADXL345::getAxisOffset(int* x, int* y, int*z) {
-	uint8_t _b;
-	readFrom(ADXL345_OFSX, 1, &_b);  
-	*x = int (_b);
-	readFrom(ADXL345_OFSY, 1, &_b);  
-	*y = int (_b);
-	readFrom(ADXL345_OFSZ, 1, &_b);  
-	*z = int (_b);
-}
-
-// Sets the DUR byte
-// The DUR byte contains an unsigned time value representing the maximum time
-// that an event must be above THRESH_TAP threshold to qualify as a tap event
-// The scale factor is 625µs/LSB
-// A value of 0 disables the tap/double tap funcitons. Max value is 255.
-void ADXL345::setTapDuration(int tapDuration) {
-	tapDuration = constrain(tapDuration,0,255);
-	uint8_t _b = uint8_t (tapDuration);
-	writeTo(ADXL345_DUR, _b);  
-}
-
-// Gets the DUR byte
-int ADXL345::getTapDuration() {
-	uint8_t _b;
-	readFrom(ADXL345_DUR, 1, &_b);  
-	return int (_b);
-}
-
-// Sets the latency (latent register) which contains an unsigned time value
-// representing the wait time from the detection of a tap event to the start
-// of the time window, during which a possible second tap can be detected.
-// The scale factor is 1.25ms/LSB. A value of 0 disables the double tap function.
-// It accepts a maximum value of 255.
-void ADXL345::setDoubleTapLatency(int doubleTapLatency) {
-	uint8_t _b = uint8_t (doubleTapLatency);
-	writeTo(ADXL345_LATENT, _b);  
-}
-
-// Gets the Latent value
-int ADXL345::getDoubleTapLatency() {
-	uint8_t _b;
-	readFrom(ADXL345_LATENT, 1, &_b);  
-	return int (_b);
-}
-
-// Sets the Window register, which contains an unsigned time value representing
-// the amount of time after the expiration of the latency time (Latent register)
-// during which a second valud tap can begin. The scale factor is 1.25ms/LSB. A
-// value of 0 disables the double tap function. The maximum value is 255.
-void ADXL345::setDoubleTapWindow(int doubleTapWindow) {
-	doubleTapWindow = constrain(doubleTapWindow,0,255);
-	uint8_t _b = uint8_t (doubleTapWindow);
-	writeTo(ADXL345_WINDOW, _b);  
-}
-
-// Gets the Window register
-int ADXL345::getDoubleTapWindow() {
-	uint8_t _b;
-	readFrom(ADXL345_WINDOW, 1, &_b);  
-	return int (_b);
-}
-
-// Sets the THRESH_ACT byte which holds the threshold value for detecting activity.
-// The data format is unsigned, so the magnitude of the activity event is compared 
-// with the value is compared with the value in the THRESH_ACT register. The scale
-// factor is 62.5mg/LSB. A value of 0 may result in undesirable behavior if the 
-// activity interrupt is enabled. The maximum value is 255.
-void ADXL345::setActivityThreshold(int activityThreshold) {
-	activityThreshold = constrain(activityThreshold,0,255);
-	uint8_t _b = uint8_t (activityThreshold);
-	writeTo(ADXL345_THRESH_ACT, _b);  
-}
 
-// Gets the THRESH_ACT byte
-int ADXL345::getActivityThreshold() {
-	uint8_t _b;
-	readFrom(ADXL345_THRESH_ACT, 1, &_b);  
-	return int (_b);
+uint8_t ITG3200::getFilterBW() {  
+  readmem(DLPF_FS, 1, &_buff[0]);
+  return (_buff[0] & DLPFFS_DLPF_CFG); 
 }
 
-// Sets the THRESH_INACT byte which holds the threshold value for detecting inactivity.
-// The data format is unsigned, so the magnitude of the inactivity event is compared 
-// with the value is compared with the value in the THRESH_INACT register. The scale
-// factor is 62.5mg/LSB. A value of 0 may result in undesirable behavior if the 
-// inactivity interrupt is enabled. The maximum value is 255.
-void ADXL345::setInactivityThreshold(int inactivityThreshold) {
-	inactivityThreshold = constrain(inactivityThreshold,0,255);
-	uint8_t _b = uint8_t (inactivityThreshold);
-	writeTo(ADXL345_THRESH_INACT, _b);  
+void ITG3200::setFilterBW(uint8_t _BW) {   
+  readmem(DLPF_FS, 1, &_buff[0]);
+  writemem(DLPF_FS, ((_buff[0] & ~DLPFFS_DLPF_CFG) | _BW)); 
 }
 
-// Gets the THRESH_INACT byte
-int ADXL345::getInactivityThreshold() {
-	uint8_t _b;
-	readFrom(ADXL345_THRESH_INACT, 1, &_b);  
-	return int (_b);
+bool ITG3200::isINTActiveOnLow() {  
+  readmem(INT_CFG, 1, &_buff[0]);
+  return ((_buff[0] & INTCFG_ACTL) >> 7);
 }
 
-// Sets the TIME_INACT register, which contains an unsigned time value representing the
-// amount of time that acceleration must be less thant the value in the THRESH_INACT
-// register for inactivity to be declared. The scale factor is 1sec/LSB. The value must
-// be between 0 and 255.
-void ADXL345::setTimeInactivity(int timeInactivity) {
-	timeInactivity = constrain(timeInactivity,0,255);
-	uint8_t _b = uint8_t (timeInactivity);
-	writeTo(ADXL345_TIME_INACT, _b);  
+void ITG3200::setINTLogiclvl(bool _State) {
+  readmem(INT_CFG, 1, &_buff[0]);
+  writemem(INT_CFG, ((_buff[0] & ~INTCFG_ACTL) | (_State << 7))); 
 }
 
-// Gets the TIME_INACT register
-int ADXL345::getTimeInactivity() {
-	uint8_t _b;
-	readFrom(ADXL345_TIME_INACT, 1, &_b);  
-	return int (_b);
+bool ITG3200::isINTOpenDrain() {  
+  readmem(INT_CFG, 1, &_buff[0]);
+  return ((_buff[0] & INTCFG_OPEN) >> 6);
 }
 
-// Sets the THRESH_FF register which holds the threshold value, in an unsigned format, for
-// free-fall detection. The root-sum-square (RSS) value of all axes is calculated and
-// compared whith the value in THRESH_FF to determine if a free-fall event occured. The 
-// scale factor is 62.5mg/LSB. A value of 0 may result in undesirable behavior if the free-fall
-// interrupt is enabled. The maximum value is 255.
-void ADXL345::setFreeFallThreshold(int freeFallThreshold) {
-	freeFallThreshold = constrain(freeFallThreshold,0,255);
-	uint8_t _b = uint8_t (freeFallThreshold);
-	writeTo(ADXL345_THRESH_FF, _b);  
+void ITG3200::setINTDriveType(bool _State) {
+  readmem(INT_CFG, 1, &_buff[0]);
+  writemem(INT_CFG, ((_buff[0] & ~INTCFG_OPEN) | _State << 6)); 
 }
 
-// Gets the THRESH_FF register.
-int ADXL345::getFreeFallThreshold() {
-	uint8_t _b;
-	readFrom(ADXL345_THRESH_FF, 1, &_b);  
-	return int (_b);
+bool ITG3200::isLatchUntilCleared() {    
+  readmem(INT_CFG, 1, &_buff[0]);
+  return ((_buff[0] & INTCFG_LATCH_INT_EN) >> 5);
 }
 
-// Sets the TIME_FF register, which holds an unsigned time value representing the minimum
-// time that the RSS value of all axes must be less than THRESH_FF to generate a free-fall 
-// interrupt. The scale factor is 5ms/LSB. A value of 0 may result in undesirable behavior if
-// the free-fall interrupt is enabled. The maximum value is 255.
-void ADXL345::setFreeFallDuration(int freeFallDuration) {
-	freeFallDuration = constrain(freeFallDuration,0,255);  
-	uint8_t _b = uint8_t (freeFallDuration);
-	writeTo(ADXL345_TIME_FF, _b);  
+void ITG3200::setLatchMode(bool _State) {
+  readmem(INT_CFG, 1, &_buff[0]);
+  writemem(INT_CFG, ((_buff[0] & ~INTCFG_LATCH_INT_EN) | _State << 5)); 
 }
 
-// Gets the TIME_FF register.
-int ADXL345::getFreeFallDuration() {
-	uint8_t _b;
-	readFrom(ADXL345_TIME_FF, 1, &_b);  
-	return int (_b);
+bool ITG3200::isAnyRegClrMode() {    
+  readmem(INT_CFG, 1, &_buff[0]);
+  return ((_buff[0] & INTCFG_INT_ANYRD_2CLEAR) >> 4);
 }
 
-bool ADXL345::isActivityXEnabled() {  
-	return getRegisterBit(ADXL345_ACT_INACT_CTL, 6); 
-}
-bool ADXL345::isActivityYEnabled() {  
-	return getRegisterBit(ADXL345_ACT_INACT_CTL, 5); 
-}
-bool ADXL345::isActivityZEnabled() {  
-	return getRegisterBit(ADXL345_ACT_INACT_CTL, 4); 
+void ITG3200::setLatchClearMode(bool _State) {
+  readmem(INT_CFG, 1, &_buff[0]);
+  writemem(INT_CFG, ((_buff[0] & ~INTCFG_INT_ANYRD_2CLEAR) | _State << 4)); 
 }
-bool ADXL345::isInactivityXEnabled() {  
-	return getRegisterBit(ADXL345_ACT_INACT_CTL, 2); 
-}
-bool ADXL345::isInactivityYEnabled() {  
-	return getRegisterBit(ADXL345_ACT_INACT_CTL, 1); 
-}
-bool ADXL345::isInactivityZEnabled() {  
-	return getRegisterBit(ADXL345_ACT_INACT_CTL, 0); 
-}
 
-void ADXL345::setActivityX(bool state) {  
-	setRegisterBit(ADXL345_ACT_INACT_CTL, 6, state); 
-}
-void ADXL345::setActivityY(bool state) {  
-	setRegisterBit(ADXL345_ACT_INACT_CTL, 5, state); 
-}
-void ADXL345::setActivityZ(bool state) {  
-	setRegisterBit(ADXL345_ACT_INACT_CTL, 4, state); 
+bool ITG3200::isITGReadyOn() {   
+  readmem(INT_CFG, 1, &_buff[0]);
+  return ((_buff[0] & INTCFG_ITG_RDY_EN) >> 2);
 }
-void ADXL345::setInactivityX(bool state) {  
-	setRegisterBit(ADXL345_ACT_INACT_CTL, 2, state); 
-}
-void ADXL345::setInactivityY(bool state) {  
-	setRegisterBit(ADXL345_ACT_INACT_CTL, 1, state); 
-}
-void ADXL345::setInactivityZ(bool state) {  
-	setRegisterBit(ADXL345_ACT_INACT_CTL, 0, state); 
-}
 
-bool ADXL345::isActivityAc() { 
-	return getRegisterBit(ADXL345_ACT_INACT_CTL, 7); 
+void ITG3200::setITGReady(bool _State) {
+  readmem(INT_CFG, 1, &_buff[0]);
+  writemem(INT_CFG, ((_buff[0] & ~INTCFG_ITG_RDY_EN) | _State << 2)); 
 }
-bool ADXL345::isInactivityAc(){ 
-	return getRegisterBit(ADXL345_ACT_INACT_CTL, 3); 
-}
 
-void ADXL345::setActivityAc(bool state) {  
-	setRegisterBit(ADXL345_ACT_INACT_CTL, 7, state); 
+bool ITG3200::isRawDataReadyOn() {
+  readmem(INT_CFG, 1, &_buff[0]);
+  return (_buff[0] & INTCFG_RAW_RDY_EN);
 }
-void ADXL345::setInactivityAc(bool state) {  
-	setRegisterBit(ADXL345_ACT_INACT_CTL, 3, state); 
-}
 
-bool ADXL345::getSuppressBit(){ 
-	return getRegisterBit(ADXL345_TAP_AXES, 3); 
-}
-void ADXL345::setSuppressBit(bool state) {  
-	setRegisterBit(ADXL345_TAP_AXES, 3, state); 
+void ITG3200::setRawDataReady(bool _State) {
+  readmem(INT_CFG, 1, &_buff[0]);
+  writemem(INT_CFG, ((_buff[0] & ~INTCFG_RAW_RDY_EN) | _State)); 
 }
 
-bool ADXL345::isTapDetectionOnX(){ 
-	return getRegisterBit(ADXL345_TAP_AXES, 2); 
+bool ITG3200::isITGReady() {
+  readmem(INT_STATUS, 1, &_buff[0]);
+  return ((_buff[0] & INTSTATUS_ITG_RDY) >> 2);
 }
-void ADXL345::setTapDetectionOnX(bool state) {  
-	setRegisterBit(ADXL345_TAP_AXES, 2, state); 
-}
-bool ADXL345::isTapDetectionOnY(){ 
-	return getRegisterBit(ADXL345_TAP_AXES, 1); 
-}
-void ADXL345::setTapDetectionOnY(bool state) {  
-	setRegisterBit(ADXL345_TAP_AXES, 1, state); 
-}
-bool ADXL345::isTapDetectionOnZ(){ 
-	return getRegisterBit(ADXL345_TAP_AXES, 0); 
-}
-void ADXL345::setTapDetectionOnZ(bool state) {  
-	setRegisterBit(ADXL345_TAP_AXES, 0, state); 
-}
 
-bool ADXL345::isActivitySourceOnX(){ 
-	return getRegisterBit(ADXL345_ACT_TAP_STATUS, 6); 
+bool ITG3200::isRawDataReady() {
+  readmem(INT_STATUS, 1, &_buff[0]);
+  return (_buff[0] & INTSTATUS_RAW_DATA_RDY);
 }
-bool ADXL345::isActivitySourceOnY(){ 
-	return getRegisterBit(ADXL345_ACT_TAP_STATUS, 5); 
-}
-bool ADXL345::isActivitySourceOnZ(){ 
-	return getRegisterBit(ADXL345_ACT_TAP_STATUS, 4); 
-}
 
-bool ADXL345::isTapSourceOnX(){ 
-	return getRegisterBit(ADXL345_ACT_TAP_STATUS, 2); 
+void ITG3200::readTemp(float *_Temp) {
+  readmem(TEMP_OUT,2,_buff);
+  *_Temp = 35 + ((_buff[0] << 8 | _buff[1]) + 13200) / 280.0;    // F=C*9/5+32
 }
-bool ADXL345::isTapSourceOnY(){ 
-	return getRegisterBit(ADXL345_ACT_TAP_STATUS, 1); 
-}
-bool ADXL345::isTapSourceOnZ(){ 
-	return getRegisterBit(ADXL345_ACT_TAP_STATUS, 0); 
-}
 
-bool ADXL345::isAsleep(){ 
-	return getRegisterBit(ADXL345_ACT_TAP_STATUS, 3); 
+void ITG3200::readGyroRaw( int16_t *_GyroX, int16_t *_GyroY, int16_t *_GyroZ){
+  readmem(GYRO_XOUT, 6, _buff);
+  *_GyroX = _buff[0] << 8 | _buff[1];
+  *_GyroY = _buff[2] << 8 | _buff[3]; 
+  *_GyroZ = _buff[4] << 8 | _buff[5];
 }
 
-bool ADXL345::isLowPower(){ 
-	return getRegisterBit(ADXL345_BW_RATE, 4); 
-}
-void ADXL345::setLowPower(bool state) {  
-	setRegisterBit(ADXL345_BW_RATE, 4, state); 
+void ITG3200::readGyroRaw( int16_t *_GyroXYZ){
+  readGyroRaw(_GyroXYZ, _GyroXYZ+1, _GyroXYZ+2);
 }
 
-double ADXL345::getRate(){
-	uint8_t _b;
-	readFrom(ADXL345_BW_RATE, 1, &_b);
-	_b &= 0b00001111;
-	return (pow(2,((int) _b)-6)) * 6.25;
+void ITG3200::setScaleFactor(float _Xcoeff, float _Ycoeff, float _Zcoeff, bool _Radians) { 
+  scalefactor[0] = 14.375 * _Xcoeff;   
+  scalefactor[1] = 14.375 * _Ycoeff;
+  scalefactor[2] = 14.375 * _Zcoeff;    
+    
+  if (_Radians){
+    scalefactor[0] /= 0.0174532925;//0.0174532925 = PI/180
+    scalefactor[1] /= 0.0174532925;
+    scalefactor[2] /= 0.0174532925;
+  }
 }
 
-void ADXL345::setRate(double rate){
-	uint8_t _b,_s;
-	int v = (int) (rate / 6.25);
-	int r = 0;
-	while (v >>= 1)
-	{
-		r++;
-	}
-	if (r <= 9) { 
-		readFrom(ADXL345_BW_RATE, 1, &_b);
-		_s = (uint8_t) (r + 6) | (_b & 0b11110000);
-		writeTo(ADXL345_BW_RATE, _s);
-	}
+void ITG3200::setOffsets(int _Xoffset, int _Yoffset, int _Zoffset) {
+  offsets[0] = _Xoffset;
+  offsets[1] = _Yoffset;
+  offsets[2] = _Zoffset;
 }
 
-void ADXL345::set_bw(uint8_t bw_code){
-	if((bw_code < ADXL345_BW_3) || (bw_code > ADXL345_BW_1600)){
-		status = false;
-		error_code = ADXL345_BAD_ARG;
-	}
-	else{
-		writeTo(ADXL345_BW_RATE, bw_code);
-	}
-}
+void ITG3200::zeroCalibrate(unsigned int totSamples, unsigned int sampleDelayMS) {
+  float tmpOffsets[] = {0,0,0};
+  int16_t xyz[3];
 
-uint8_t ADXL345::get_bw_code(){
-	uint8_t bw_code;
-	readFrom(ADXL345_BW_RATE, 1, &bw_code);
-	return bw_code;
+  for (int i = 0;i < totSamples;i++){
+    delay_ms(sampleDelayMS);
+    readGyroRaw(xyz);
+    tmpOffsets[0] += xyz[0];
+    tmpOffsets[1] += xyz[1];
+    tmpOffsets[2] += xyz[2];
+  }
+  setOffsets(-tmpOffsets[0] / totSamples + 0.5, -tmpOffsets[1] / totSamples + 0.5, -tmpOffsets[2] / totSamples + 0.5);
 }
-
 
+void ITG3200::readGyroRawCal(int16_t *_GyroX, int16_t *_GyroY, int16_t *_GyroZ) { 
+  readGyroRaw(_GyroX, _GyroY, _GyroZ); 
+  *_GyroX += offsets[0]; 
+  *_GyroY += offsets[1]; 
+  *_GyroZ += offsets[2]; 
+} 
 
+void ITG3200::readGyroRawCal(int16_t *_GyroXYZ) { 
+  readGyroRawCal(_GyroXYZ, _GyroXYZ+1, _GyroXYZ+2); 
+} 
 
+void ITG3200::readGyro(float *_GyroX, float *_GyroY, float *_GyroZ){
+  int16_t x, y, z; 
+  readGyroRawCal(&x, &y, &z); // x,y,z will contain calibrated integer values from the sensor 
+  *_GyroX =  x / scalefactor[0]; 
+  *_GyroY =  y / scalefactor[1]; 
+  *_GyroZ =  z / scalefactor[2];     
+} 
 
-//Used to check if action was triggered in interrupts
-//Example triggered(interrupts, ADXL345_SINGLE_TAP);
-bool ADXL345::triggered(uint8_t interrupts, int mask){
-	return ((interrupts >> mask) & 1);
+void ITG3200::readGyro(float *_GyroXYZ){
+  readGyro(_GyroXYZ, _GyroXYZ+1, _GyroXYZ+2);
 }
-
-
-/*
- ADXL345_DATA_READY
- ADXL345_SINGLE_TAP
- ADXL345_DOUBLE_TAP
- ADXL345_ACTIVITY
- ADXL345_INACTIVITY
- ADXL345_FREE_FALL
- ADXL345_WATERMARK
- ADXL345_OVERRUNY
- */
-
 
-
+void ITG3200::reset() {     
+  writemem(PWR_MGM, PWRMGM_HRESET); 
+  delay_ms(GYROSTART_UP_DELAY); //gyro startup 
+}
 
+bool ITG3200::isLowPower() {   
+  readmem(PWR_MGM, 1, &_buff[0]);
+  return (_buff[0] & PWRMGM_SLEEP) >> 6;
+}
+  
+void ITG3200::setPowerMode(bool _State) {
+  readmem(PWR_MGM, 1, &_buff[0]);
+  writemem(PWR_MGM, ((_buff[0] & ~PWRMGM_SLEEP) | _State << 6));  
+}
 
-uint8_t ADXL345::getInterruptSource() {
-	uint8_t _b;
-	readFrom(ADXL345_INT_SOURCE, 1, &_b);
-	return _b;
+bool ITG3200::isXgyroStandby() {
+  readmem(PWR_MGM, 1, &_buff[0]);
+  return (_buff[0] & PWRMGM_STBY_XG) >> 5;
 }
 
-bool ADXL345::getInterruptSource(uint8_t interruptBit) {
-	return getRegisterBit(ADXL345_INT_SOURCE,interruptBit);
+bool ITG3200::isYgyroStandby() {
+  readmem(PWR_MGM, 1, &_buff[0]);
+  return (_buff[0] & PWRMGM_STBY_YG) >> 4;
 }
 
-bool ADXL345::getInterruptMapping(uint8_t interruptBit) {
-	return getRegisterBit(ADXL345_INT_MAP,interruptBit);
+bool ITG3200::isZgyroStandby() {
+  readmem(PWR_MGM, 1, &_buff[0]);
+  return (_buff[0] & PWRMGM_STBY_ZG) >> 3;
 }
 
-// Set the mapping of an interrupt to pin1 or pin2
-// eg: setInterruptMapping(ADXL345_INT_DOUBLE_TAP_BIT,ADXL345_INT2_PIN);
-void ADXL345::setInterruptMapping(uint8_t interruptBit, bool interruptPin) {
-	setRegisterBit(ADXL345_INT_MAP, interruptBit, interruptPin);
+void ITG3200::setXgyroStandby(bool _Status) {
+  readmem(PWR_MGM, 1, &_buff[0]);
+  writemem(PWR_MGM, ((_buff[0] & PWRMGM_STBY_XG) | _Status << 5));
 }
 
-bool ADXL345::isInterruptEnabled(uint8_t interruptBit) {
-	return getRegisterBit(ADXL345_INT_ENABLE,interruptBit);
+void ITG3200::setYgyroStandby(bool _Status) {
+  readmem(PWR_MGM, 1, &_buff[0]);
+  writemem(PWR_MGM, ((_buff[0] & PWRMGM_STBY_YG) | _Status << 4));
 }
 
-void ADXL345::setInterrupt(uint8_t interruptBit, bool state) {
-	setRegisterBit(ADXL345_INT_ENABLE, interruptBit, state);
+void ITG3200::setZgyroStandby(bool _Status) {
+  readmem(PWR_MGM, 1, &_buff[0]);
+  writemem(PWR_MGM, ((_buff[0] & PWRMGM_STBY_ZG) | _Status << 3));
 }
 
-void ADXL345::setRegisterBit(uint8_t regAdress, int bitPos, bool state) {
-	uint8_t _b;
-	readFrom(regAdress, 1, &_b);
-	if (state) {
-		_b |= (1 << bitPos);  // forces nth bit of _b to be 1.  all other bits left alone.
-	} 
-	else {
-		_b &= ~(1 << bitPos); // forces nth bit of _b to be 0.  all other bits left alone.
-	}
-	writeTo(regAdress, _b);  
+uint8_t ITG3200::getClockSource() {  
+  readmem(PWR_MGM, 1, &_buff[0]);
+  return (_buff[0] & PWRMGM_CLK_SEL);
 }
 
-bool ADXL345::getRegisterBit(uint8_t regAdress, int bitPos) {
-	uint8_t _b;
-	readFrom(regAdress, 1, &_b);
-	return ((_b >> bitPos) & 1);
+void ITG3200::setClockSource(uint8_t _CLKsource) {   
+  readmem(PWR_MGM, 1, &_buff[0]);
+  writemem(PWR_MGM, ((_buff[0] & ~PWRMGM_CLK_SEL) | _CLKsource)); 
 }
 
-// print all register value to the serial ouptut, which requires it to be setup
-// this can be used to manually to check the current configuration of the device
-//void ADXL345::printAllRegister() {
-//	byte _b;
-//	Serial.print("0x00: ");
-//	readFrom(0x00, 1, &_b);
-//	print_byte(_b);
-//	Serial.println("");
-//	int i;
-//	for (i=29;i<=57;i++){
-//		Serial.print("0x");
-//		Serial.print(i, HEX);
-//		Serial.print(": ");
-//		readFrom(i, 1, &_b);
-//		print_byte(_b);
-//		Serial.println("");    
-//	}
-//}
+void ITG3200::writemem(uint8_t _addr, uint8_t _val) {
+    i2c_write_byte_eeprom( _dev_address, _addr, _val );
+}
 
-//void print_byte(byte val){
-//	int i;
-//	Serial.print("B");
-//	for(i=7; i>=0; i--){
-//		Serial.print(val >> i & 1, BIN);
-//	}
-//}
+void ITG3200::readmem(uint8_t _addr, uint8_t _nbytes, uint8_t __buff[]) {
+    i2c_read_bytes_eeprom( _dev_address, _addr, __buff, _nbytes );
+}
