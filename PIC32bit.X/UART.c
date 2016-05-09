@@ -28,12 +28,16 @@ uint8_t input_command = 0;
 
 void __attribute__( (__interrupt__) ) _U1BRXInterrupt()
 {
+    UART_write_string("!\n");
     input_command = U1BRXREG;
     IFS2bits.U1BRXIF = 0;
 }
 
 uint8_t UART_get_last_received_command()
 {
+    if ( U1BSTAbits.URXDA )
+        input_command = U1BRXREG;
+        
     if ( input_command == 0 )
         return( 0 );
     uint8_t last_rcv = input_command;

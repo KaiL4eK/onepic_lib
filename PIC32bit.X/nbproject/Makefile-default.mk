@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=timing.c LCD.c i2c.c potentiometer.c RTC.c UART.c pmain.cpp gy85.cpp
+SOURCEFILES_QUOTED_IF_SPACED=timing.c LCD.c i2c.c potentiometer.c RTC.c UART.c gy85.cpp pmain.cpp
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/timing.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/RTC.o ${OBJECTDIR}/UART.o ${OBJECTDIR}/pmain.o ${OBJECTDIR}/gy85.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/timing.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/potentiometer.o.d ${OBJECTDIR}/RTC.o.d ${OBJECTDIR}/UART.o.d ${OBJECTDIR}/pmain.o.d ${OBJECTDIR}/gy85.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/timing.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/RTC.o ${OBJECTDIR}/UART.o ${OBJECTDIR}/gy85.o ${OBJECTDIR}/pmain.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/timing.o.d ${OBJECTDIR}/LCD.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/potentiometer.o.d ${OBJECTDIR}/RTC.o.d ${OBJECTDIR}/UART.o.d ${OBJECTDIR}/gy85.o.d ${OBJECTDIR}/pmain.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/timing.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/RTC.o ${OBJECTDIR}/UART.o ${OBJECTDIR}/pmain.o ${OBJECTDIR}/gy85.o
+OBJECTFILES=${OBJECTDIR}/timing.o ${OBJECTDIR}/LCD.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/potentiometer.o ${OBJECTDIR}/RTC.o ${OBJECTDIR}/UART.o ${OBJECTDIR}/gy85.o ${OBJECTDIR}/pmain.o
 
 # Source Files
-SOURCEFILES=timing.c LCD.c i2c.c potentiometer.c RTC.c UART.c pmain.cpp gy85.cpp
+SOURCEFILES=timing.c LCD.c i2c.c potentiometer.c RTC.c UART.c gy85.cpp pmain.cpp
 
 
 CFLAGS=
@@ -172,30 +172,30 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compileCPP
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/pmain.o: pmain.cpp  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pmain.o.d 
-	@${RM} ${OBJECTDIR}/pmain.o 
-	@${FIXDEPS} "${OBJECTDIR}/pmain.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c++ -c -mprocessor=$(MP_PROCESSOR_OPTION)  -frtti -fexceptions -fno-check-new -fenforce-eh-specs -MMD -MF "${OBJECTDIR}/pmain.o.d" -o ${OBJECTDIR}/pmain.o pmain.cpp  -relaxed-math  
-	
 ${OBJECTDIR}/gy85.o: gy85.cpp  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/gy85.o.d 
 	@${RM} ${OBJECTDIR}/gy85.o 
 	@${FIXDEPS} "${OBJECTDIR}/gy85.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c++ -c -mprocessor=$(MP_PROCESSOR_OPTION)  -frtti -fexceptions -fno-check-new -fenforce-eh-specs -MMD -MF "${OBJECTDIR}/gy85.o.d" -o ${OBJECTDIR}/gy85.o gy85.cpp  -relaxed-math  
 	
-else
 ${OBJECTDIR}/pmain.o: pmain.cpp  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/pmain.o.d 
 	@${RM} ${OBJECTDIR}/pmain.o 
-	@${FIXDEPS} "${OBJECTDIR}/pmain.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c++ -c -mprocessor=$(MP_PROCESSOR_OPTION)  -frtti -fexceptions -fno-check-new -fenforce-eh-specs -MMD -MF "${OBJECTDIR}/pmain.o.d" -o ${OBJECTDIR}/pmain.o pmain.cpp  -relaxed-math  
+	@${FIXDEPS} "${OBJECTDIR}/pmain.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c++ -c -mprocessor=$(MP_PROCESSOR_OPTION)  -frtti -fexceptions -fno-check-new -fenforce-eh-specs -MMD -MF "${OBJECTDIR}/pmain.o.d" -o ${OBJECTDIR}/pmain.o pmain.cpp  -relaxed-math  
 	
+else
 ${OBJECTDIR}/gy85.o: gy85.cpp  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/gy85.o.d 
 	@${RM} ${OBJECTDIR}/gy85.o 
 	@${FIXDEPS} "${OBJECTDIR}/gy85.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c++ -c -mprocessor=$(MP_PROCESSOR_OPTION)  -frtti -fexceptions -fno-check-new -fenforce-eh-specs -MMD -MF "${OBJECTDIR}/gy85.o.d" -o ${OBJECTDIR}/gy85.o gy85.cpp  -relaxed-math  
+	
+${OBJECTDIR}/pmain.o: pmain.cpp  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pmain.o.d 
+	@${RM} ${OBJECTDIR}/pmain.o 
+	@${FIXDEPS} "${OBJECTDIR}/pmain.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c++ -c -mprocessor=$(MP_PROCESSOR_OPTION)  -frtti -fexceptions -fno-check-new -fenforce-eh-specs -MMD -MF "${OBJECTDIR}/pmain.o.d" -o ${OBJECTDIR}/pmain.o pmain.cpp  -relaxed-math  
 	
 endif
 
