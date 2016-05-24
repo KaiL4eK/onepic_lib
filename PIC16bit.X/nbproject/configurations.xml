@@ -8,6 +8,7 @@
       <itemPath>pragmas.h</itemPath>
       <itemPath>LCD.h</itemPath>
       <itemPath>freq.h</itemPath>
+      <itemPath>ad7705.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -22,6 +23,10 @@
       <itemPath>LCD.c</itemPath>
       <itemPath>i2c.c</itemPath>
       <itemPath>RTC.c</itemPath>
+      <itemPath>UART.c</itemPath>
+      <itemPath>ad7705.c</itemPath>
+      <itemPath>spi.c</itemPath>
+      <itemPath>pwm.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -96,7 +101,7 @@
         <property key="oXC16gcc-sfr-warn" value="false"/>
         <property key="oXC16gcc-smar-io-lvl" value="1"/>
         <property key="oXC16gcc-smart-io-fmt" value=""/>
-        <property key="optimization-level" value="0"/>
+        <property key="optimization-level" value="1"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value=""/>
@@ -208,7 +213,6 @@
         <property key="UART 2" value="true"/>
         <property key="UART 3" value="true"/>
         <property key="UART 4" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
