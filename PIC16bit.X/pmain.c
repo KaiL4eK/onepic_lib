@@ -22,6 +22,38 @@
 //000 = 8 MHz (divide by 1)
 #define SET_POSTSCALER_ONE CLKDIVbits.RCDIV = 0b000;
 
+/*
+ * Connection:
+ *      <AD7705>        <Direct connect>    <PIC24>
+ *      SCLK        -   SCK(12)         -   RB5
+ *      MCLK IN     -   QUARTZ
+ *      MCLK OUT    -   QUARTZ
+ *      CS          -   GND(Always chosen)
+ *      nRESET      -   PTP17(17)       -   RE4
+ *      AIN1(+)     -   YELLOW_TENZO
+ *      AIN1(-)     -   ORANGE_TENZO
+ *      GND         -   GND
+ *      VDD         -   VDD_IN(3.3V)
+ *      DIN         -   SDO(8)          -   RD2
+ *      DOUT        -   SDI(10)         -   RD1
+ *      nDRDY       -   PTP12(18)       -   RD6
+ *      REF IN(-)   -   GND
+ *      REF IN(+)   -   POT_OUT
+ * 
+ *      <Potentiometer> <Connect>
+ *      POT_SUP(+)  -   VDD(3.3V)
+ *      POT_SUP(-)  -   GND
+ * 
+ *      <Tenzo>         <Connect>
+ *      RED_TENZO   -   USB(+)(red)(+5V)
+ *      BROWN_TENZO -   GND
+ * 
+ *      <USB>           <Connect>           <PIC24>
+ *      Green       -   PTP6            -   RB15
+ *      White       -   PTP5            -   RB14
+ *      Black       -   GND
+ */
+
 int main ( void ) 
 {
     SWITCH_OFF_ANALOGS
