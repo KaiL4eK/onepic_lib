@@ -6,7 +6,6 @@
 
 #include "core.h"
 #include <stdio.h>
-#include "ad7705.h"
 
 #include "pragmas.h"
 
@@ -22,37 +21,6 @@
 //000 = 8 MHz (divide by 1)
 #define SET_POSTSCALER_ONE CLKDIVbits.RCDIV = 0b000;
 
-/*
- * Connection:
- *      <AD7705>        <Direct connect>    <PIC24>
- *      SCLK        -   SCK(12)         -   RB5
- *      MCLK IN     -   QUARTZ
- *      MCLK OUT    -   QUARTZ
- *      CS          -   GND(Always chosen)
- *      nRESET      -   PTP17(17)       -   RE4
- *      AIN1(+)     -   YELLOW_TENZO
- *      AIN1(-)     -   ORANGE_TENZO
- *      GND         -   GND
- *      VDD         -   VDD_IN(3.3V)
- *      DIN         -   SDO(8)          -   RD2
- *      DOUT        -   SDI(10)         -   RD1
- *      nDRDY       -   PTP12(18)       -   RD6
- *      REF IN(-)   -   GND
- *      REF IN(+)   -   POT_OUT
- * 
- *      <Potentiometer> <Connect>
- *      POT_SUP(+)  -   VDD(3.3V)
- *      POT_SUP(-)  -   GND
- * 
- *      <Tenzo>         <Connect>
- *      RED_TENZO   -   USB(+)(red)(+5V)
- *      BROWN_TENZO -   GND
- * 
- *      <USB>           <Connect>           <PIC24>
- *      Green       -   PTP6            -   RB15
- *      White       -   PTP5            -   RB14
- *      Black       -   GND
- */
 
 int main ( void ) 
 {
@@ -69,17 +37,7 @@ int main ( void )
     
     init_UART1( UART_460800 );
     UART_write_string("UART initialized\r\n");
-#ifdef AD7705
-    spi_init();
-    int res = 0;
-    if ( ( res = ad7705_init() ) < 0 )
-    {
-        UART_write_string( "AD7705 initialization failed, %d\n", res );
-        while ( 1 );
-    }
-    spi_set_speed( SPI_PRIM_1, SPI_SEC_2 );
-    UART_write_string( "AD7705 initialized and calibrate\n" );
-#endif
+
     while ( 1 )
     {
 //        delay_ms( 1000 );
@@ -105,16 +63,6 @@ int main ( void )
         uint8_t byte = UART_get_last_received_command();
         if ( byte )
             UART_write_string( "Byte: %d\n", byte );
-        
-#ifdef AD7705
-        if ( !nDRDY_PIN )
-        {
-            uint16_t data_res = ad7705_read_register( DATA );
-            UART_write_string( "Data: %d\n", data_res );
-        }
-        
-        delay_ms( 100 );
-#endif
     }
     return( 0 );
 }
