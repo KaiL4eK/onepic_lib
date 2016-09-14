@@ -60,16 +60,17 @@ int main ( void )
     SET_POSTSCALER_ONE
     
 //    lcd_init();
-//    potnt_init();
-//    pwm_init( 50 );
+    potnt_init();
+    pwm_init( 400 );
 //    i2c_init( 400000 );
-//    rtc_init();щ
+//    rtc_init();
 //    _TRISF6 = 0;
 //    _LATF6 = 1;
-    spi_init();
+    
     init_UART1( UART_460800 );
     UART_write_string("UART initialized\r\n");
-
+#ifdef AD7705
+    spi_init();
     int res = 0;
     if ( ( res = ad7705_init() ) < 0 )
     {
@@ -78,7 +79,7 @@ int main ( void )
     }
     spi_set_speed( SPI_PRIM_1, SPI_SEC_2 );
     UART_write_string( "AD7705 initialized and calibrate\n" );
-            
+#endif
     while ( 1 )
     {
 //        delay_ms( 1000 );
@@ -92,20 +93,28 @@ int main ( void )
         
         
 //        time_t *time_data = rtc_get_raw_data();
-//        uint16_t pVal = potnt_get_value();
+        uint16_t pVal = potnt_get_value();
 //        char    buf[16];
-//        uint16_t pVal_prc = 100L*pVal/1023;
+        uint16_t pVal_prc = 100L*pVal/1023;
 //        sprintf( buf, "%02d", pVal_prc );
 //        lcd_clear();
 //        lcd_write_string( buf );
-//        pwm_set_dutyCycle_percent( pVal_prc );
+        pwm_set_dutyCycle_percent( pVal_prc );
+//        UART_write_string( "Data: %d\n", pVal_prc );
+        
+        uint8_t byte = UART_get_last_received_command();
+        if ( byte )
+            UART_write_string( "Byte: %d\n", byte );
+        
+#ifdef AD7705
         if ( !nDRDY_PIN )
         {
-            uint32_t data_res = ad7705_read_register( DATA );
-            UART_write_string( "Data: %ld\n", data_res );
+            uint16_t data_res = ad7705_read_register( DATA );
+            UART_write_string( "Data: %d\n", data_res );
         }
         
         delay_ms( 100 );
+#endif
     }
     return( 0 );
 }

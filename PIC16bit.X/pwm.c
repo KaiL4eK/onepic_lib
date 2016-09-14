@@ -15,9 +15,9 @@ void pwm_init ( uint16_t freq )
 {
 // Zero timer counter
     TMR2 = 0;
-//RP29R<5:0>: RP23 Output Pin Mapping bits
+//RP29R<5:0>: RP29 Output Pin Mapping bits
 //18 OC1 Output Compare 1
-    RPOR14bits.RP29R = 18;
+    RPOR14bits.RP29R = 18;  // PTP6
 //Duty cycle
     OC1R = 0;
 //TCKPS<1:0>: Timerx Input Clock Prescale Select bits

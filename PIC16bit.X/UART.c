@@ -16,15 +16,13 @@ void init_UART1( UART_speed_t UART_br )
 	U1MODEbits.UEN = 0;		// Bits8,9 TX,RX enabled, CTS,RTS not
 	U1BRG = UART_br;
     U1MODEbits.BRGH = 1;
-//    _U1RXIE = 1;          // Enable Rx interrupt
-//    _U1RXIF = 0;
-    _U1RXR = 29;    // U1RX to pin RP29 - PTP6
+    _U1RXIE = 1;          // Enable Rx interrupt
+    _U1RXIF = 0;
+    _U1RXR = 37;    // U1RX to pin RP29 - PTP6
     _RP14R = 3;     // U1TX to pin RP14 - PTP5
     
 	U1MODEbits.UARTEN = 1;	// And turn the peripheral on
 	U1STAbits.UTXEN = 1;
-//    _U1TXIE = 1;          //Enable TX interrupt 
-//    _U1TXIF = 0;
 }
 
 uint8_t input_command = 0;
